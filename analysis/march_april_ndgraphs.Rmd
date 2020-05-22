@@ -62,7 +62,7 @@ merged_data %>%
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>% 
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(6, "Paired"))
+  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2"))
 
 ```
 
