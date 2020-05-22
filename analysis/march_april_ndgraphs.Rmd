@@ -31,13 +31,35 @@ merged_data <- zoo::rbind.zoo(march,april)
 # merged_data %>% summary()
 ```
 
+```{r}
+dyUnzoom <-function(dygraph) {
+  dyPlugin(
+    dygraph = dygraph,
+    name = "Unzoom",
+    path = system.file("plugins/unzoom.js", package = "dygraphs")
+  )
+}
+
+
+dyCrosshair <- function(dygraph, 
+                        direction = c("both", "horizontal", "vertical")) {
+  dyPlugin(
+    dygraph = dygraph,
+    name = "Crosshair",
+    path = system.file("plugins/crosshair.js", 
+                       package = "dygraphs"),
+    options = list(direction = match.arg(direction))
+  )
+}
+
+```
 
 # Covid Tweets and Identities 
 
 ```{r}
 merged_data[,-c(1,2)] %>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Pattern") %>% 
+  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -45,16 +67,37 @@ merged_data[,-c(1,2)] %>%
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+  dyUnzoom() %>% 
+  dyCrosshair() %>% 
   dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))
 ```
 
+## Covid Tweets and Identities with 24H roll
+ 
+```{r}
+merged_data[,-c(1,2)] %>% 
+  # head(100) %>% 
+  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+  dyRangeSelector() %>% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
+  dyRangeSelector(height = 50) %>% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %>%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+  dyRoller(rollPeriod = 24) %>% 
+  dyUnzoom() %>% 
+  dyCrosshair() %>% 
+  dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))
+```
+ 
 
 # Covid Tweets With Sums
 ```{r}
 
 merged_data %>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Pattern") %>% 
+  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -62,7 +105,32 @@ merged_data %>%
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>% 
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2"))
+  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
+  dyUnzoom() %>% 
+  dyCrosshair()
+
+```
+
+
+
+## Covid Tweets With Sums with 24H roll
+
+```{r}
+
+merged_data %>% 
+  # head(100) %>% 
+  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+  dyRangeSelector() %>% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
+  dyRangeSelector(height = 50) %>% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %>% 
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
+  dyRoller(rollPeriod = 24) %>% 
+  dyUnzoom() %>% 
+  dyCrosshair()
 
 ```
 
