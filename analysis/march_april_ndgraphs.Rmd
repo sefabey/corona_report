@@ -40,7 +40,7 @@ merged_data[,-c(1,2)] %>%
   dygraph(main = "Tweets Matching The Identity Pattern") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
-  dyRangeSelector(height = 30) %>% 
+  dyRangeSelector(height = 50) %>% 
   dyHighlight(highlightCircleSize = 5, 
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>%
@@ -57,7 +57,7 @@ merged_data %>%
   dygraph(main = "Tweets Matching The Identity Pattern") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
-  dyRangeSelector(height = 20) %>% 
+  dyRangeSelector(height = 50) %>% 
   dyHighlight(highlightCircleSize = 5, 
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>% 
