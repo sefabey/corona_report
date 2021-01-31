@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Sefa Ozalp" />
+
+<meta name="date" content="2020-05-22" />
+
+<title>march_april_ndgraphs</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+<link href="site_libs/dygraphs-1.1.1/dygraph.css" rel="stylesheet" />
+<script src="site_libs/dygraphs-1.1.1/dygraph-combined.js"></script>
+<script src="site_libs/dygraphs-1.1.1/shapes.js"></script>
+<script src="site_libs/moment-2.8.4/moment.js"></script>
+<script src="site_libs/moment-timezone-0.2.5/moment-timezone-with-data.js"></script>
+<script src="site_libs/moment-fquarter-1.0.0/moment-fquarter.min.js"></script>
+<script src="site_libs/dygraphs-binding-1.1.1.6/dygraphs.js"></script>
+<script src="site_libs/Dygraph.Plugins.Unzoom-1.0/unzoom.js"></script>
+<script src="site_libs/Dygraph.Plugins.Crosshair-1.0/crosshair.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">corona_report</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">march_april_ndgraphs</h1>
+<h4 class="author">Sefa Ozalp</h4>
+<h4 class="date">2020-05-22</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-01-30
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>corona_report/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200505code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200505)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200505code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200505)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttree1089b0f42932a514a6db7c68c83a0732ae5ce762targetblank1089b0fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/sefabey/corona_report/tree/1089b0f42932a514a6db7c68c83a0732ae5ce762" target="_blank">1089b0f</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttree1089b0f42932a514a6db7c68c83a0732ae5ce762targetblank1089b0fa" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    data/corona_data/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/march_april_ndgraphs_asianslursonly.Rmd
+    Untracked:  broken_tweets/
+    Untracked:  code/ndgraphs.R
+    Untracked:  code/parse_tweets.R
+    Untracked:  code/parse_tweets.Rout
+    Untracked:  code/run_parser.sh
+    Untracked:  data/corona_data/csvs/
+    Untracked:  data/patterns/pattern_asian_slursonly.json
+    Untracked:  shiny/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/march_april_ndgraphs.Rmd
+    Modified:   data/patterns/pattern_asian.json
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="data-ingest" class="section level1">
+<h1>Data Ingest</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>── Attaching packages ── tidyverse 1.2.1 ──</code></pre>
+<pre><code>✓ ggplot2 3.3.0     ✓ purrr   0.3.3
+✓ tibble  2.1.3     ✓ dplyr   0.8.5
+✓ tidyr   1.0.0     ✓ stringr 1.4.0
+✓ readr   1.3.1     ✓ forcats 0.4.0</code></pre>
+<pre><code>── Conflicts ───── tidyverse_conflicts() ──
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dygraphs)
+library(xts)</code></pre>
+<pre><code>Loading required package: zoo</code></pre>
+<pre><code>
+Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    as.Date, as.Date.numeric</code></pre>
+<pre><code>Registered S3 method overwritten by &#39;xts&#39;:
+  method     from
+  as.zoo.xts zoo </code></pre>
+<pre><code>
+Attaching package: &#39;xts&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    first, last</code></pre>
+<pre class="r"><code>knitr::opts_chunk$set(fig.width=11, fig.height=6) </code></pre>
+<pre class="r"><code>read_and_merge &lt;- function(path){
+   data &lt;- read_csv(path,
+                 col_types = cols_only(text=&#39;c&#39;, 
+                                       created_at=&#39;?&#39;, 
+                                       pattern_asian_bool = &quot;l&quot;,
+                                       pattern_asian_match = &quot;c&quot;, 
+                                       is_retweet = &quot;l&quot;)
+)
+  return(data)
+
+}
+
+data &lt;- read_and_merge(&quot;/Users/sefaozalp/Downloads/march_2020_aggregated_brief.csv&quot;) %&gt;% 
+  filter(pattern_asian_bool == TRUE)
+
+pattern_slurs &lt;- jsonlite::read_json(&quot;data/patterns/pattern_asian_slursonly.json&quot;) %&gt;% 
+  paste0(collapse = &quot;|&quot;) %&gt;% 
+  stringr::str_to_lower() %&gt;% 
+  paste0(&quot;&quot;)
+
+
+data_processed &lt;- data %&gt;% 
+      mutate(
+      pattern_asian_slur_bool= ifelse(stringr::str_detect(text, 
+                                                     regex(pattern_slurs, 
+                                                           ignore_case = TRUE)), 
+                                 TRUE,FALSE),
+      pattern_asian_slur_match = stringr::str_match_all(text, 
+                                                        regex(pattern_slurs, 
+                                                              ignore_case = TRUE))
+      )
+
+
+to_xts &lt;- data_processed %&gt;% 
+  # filter_at(vars(contains(&quot;bool&quot;)), any_vars(.==TRUE)) %&gt;%
+  rtweet::ts_data(by=&quot;hours&quot;) %&gt;% 
+  rename(asian_tweet_count= n) %&gt;% 
+  left_join( data_processed %&gt;% 
+              filter(pattern_asian_slur_bool ) %&gt;% 
+              rtweet::ts_data(by=&quot;hours&quot;) %&gt;% 
+              rename(asian_slur_tweet_count= n),
+             by = &quot;time&quot;) %&gt;% 
+  mutate_if(is.integer,  ~replace_na(., 0))
+
+
+
+data_xts &lt;- as.xts(to_xts[-1], order.by = (to_xts$time))
+# data_xts$asian_tweet_count= as.integer(data_xts$asian_tweet_count)</code></pre>
+<pre class="r"><code>dyUnzoom &lt;-function(dygraph) {
+  dyPlugin(
+    dygraph = dygraph,
+    name = &quot;Unzoom&quot;,
+    path = system.file(&quot;plugins/unzoom.js&quot;, package = &quot;dygraphs&quot;)
+  )
+}
+
+
+dyCrosshair &lt;- function(dygraph, 
+                        direction = c(&quot;both&quot;, &quot;horizontal&quot;, &quot;vertical&quot;)) {
+  dyPlugin(
+    dygraph = dygraph,
+    name = &quot;Crosshair&quot;,
+    path = system.file(&quot;plugins/crosshair.js&quot;, 
+                       package = &quot;dygraphs&quot;),
+    options = list(direction = match.arg(direction))
+  )
+}</code></pre>
+</div>
+<div id="covid-tweets-and-identities" class="section level1">
+<h1>Covid Tweets and Identities</h1>
+<pre class="r"><code>data_xts$asian_slur_tweet_count %&gt;% 
+  # head(100) %&gt;% 
+  dygraph(main = &quot;Tweets Matching The Identity Patterns&quot;) %&gt;% 
+  dyRangeSelector() %&gt;% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %&gt;% 
+  dyRangeSelector(height = 50) %&gt;% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %&gt;%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %&gt;% 
+  dyLegend(show = &quot;always&quot;, hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %&gt;%    
+  dyUnzoom() %&gt;% 
+  dyCrosshair() %&gt;% 
+  dyOptions(colors = RColorBrewer::brewer.pal(4, &quot;Set1&quot;))</code></pre>
+<div id="htmlwidget-a1977d5fc8a7e1fe22b4" style="width:1056px;height:576px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a1977d5fc8a7e1fe22b4">{"x":{"attrs":{"title":"Tweets Matching The Identity Patterns","labels":["hour","asian_slur_tweet_count"],"retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"showRangeSelector":true,"rangeSelectorHeight":50,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel","highlightSeriesOpts":{"strokeWidth":2},"highlightCircleSize":3,"highlightSeriesBackgroundAlpha":0.5,"legend":"always","labelsDivWidth":250,"labelsShowZeroValues":true,"labelsSeparateLines":true,"hideOverlayOnMouseOut":true,"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#E41A1C","#377EB8","#4DAF4A","#984EA3"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false},"scale":"hourly","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-03-11T15:00:00.000Z","2020-03-11T16:00:00.000Z","2020-03-11T17:00:00.000Z","2020-03-11T18:00:00.000Z","2020-03-11T19:00:00.000Z","2020-03-11T20:00:00.000Z","2020-03-11T21:00:00.000Z","2020-03-11T22:00:00.000Z","2020-03-11T23:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-12T01:00:00.000Z","2020-03-12T02:00:00.000Z","2020-03-12T03:00:00.000Z","2020-03-12T04:00:00.000Z","2020-03-12T05:00:00.000Z","2020-03-12T06:00:00.000Z","2020-03-12T07:00:00.000Z","2020-03-12T08:00:00.000Z","2020-03-12T09:00:00.000Z","2020-03-12T10:00:00.000Z","2020-03-12T11:00:00.000Z","2020-03-12T12:00:00.000Z","2020-03-12T13:00:00.000Z","2020-03-12T14:00:00.000Z","2020-03-12T15:00:00.000Z","2020-03-12T16:00:00.000Z","2020-03-12T17:00:00.000Z","2020-03-12T18:00:00.000Z","2020-03-12T19:00:00.000Z","2020-03-12T20:00:00.000Z","2020-03-12T21:00:00.000Z","2020-03-12T22:00:00.000Z","2020-03-12T23:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-13T01:00:00.000Z","2020-03-13T02:00:00.000Z","2020-03-13T03:00:00.000Z","2020-03-13T04:00:00.000Z","2020-03-13T05:00:00.000Z","2020-03-13T06:00:00.000Z","2020-03-13T07:00:00.000Z","2020-03-13T08:00:00.000Z","2020-03-13T09:00:00.000Z","2020-03-13T10:00:00.000Z","2020-03-13T11:00:00.000Z","2020-03-13T12:00:00.000Z","2020-03-13T13:00:00.000Z","2020-03-13T14:00:00.000Z","2020-03-13T15:00:00.000Z","2020-03-13T16:00:00.000Z","2020-03-13T17:00:00.000Z","2020-03-13T18:00:00.000Z","2020-03-13T19:00:00.000Z","2020-03-13T20:00:00.000Z","2020-03-13T21:00:00.000Z","2020-03-13T22:00:00.000Z","2020-03-13T23:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-14T01:00:00.000Z","2020-03-14T02:00:00.000Z","2020-03-14T03:00:00.000Z","2020-03-14T04:00:00.000Z","2020-03-14T05:00:00.000Z","2020-03-14T06:00:00.000Z","2020-03-14T07:00:00.000Z","2020-03-14T08:00:00.000Z","2020-03-14T09:00:00.000Z","2020-03-14T10:00:00.000Z","2020-03-14T11:00:00.000Z","2020-03-14T12:00:00.000Z","2020-03-14T13:00:00.000Z","2020-03-14T14:00:00.000Z","2020-03-14T15:00:00.000Z","2020-03-14T16:00:00.000Z","2020-03-14T17:00:00.000Z","2020-03-14T18:00:00.000Z","2020-03-14T19:00:00.000Z","2020-03-14T20:00:00.000Z","2020-03-14T21:00:00.000Z","2020-03-14T22:00:00.000Z","2020-03-14T23:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-15T01:00:00.000Z","2020-03-15T02:00:00.000Z","2020-03-15T03:00:00.000Z","2020-03-15T04:00:00.000Z","2020-03-15T05:00:00.000Z","2020-03-15T06:00:00.000Z","2020-03-15T07:00:00.000Z","2020-03-15T08:00:00.000Z","2020-03-15T09:00:00.000Z","2020-03-15T10:00:00.000Z","2020-03-15T11:00:00.000Z","2020-03-15T12:00:00.000Z","2020-03-15T13:00:00.000Z","2020-03-15T14:00:00.000Z","2020-03-15T15:00:00.000Z","2020-03-15T16:00:00.000Z","2020-03-15T17:00:00.000Z","2020-03-15T18:00:00.000Z","2020-03-15T19:00:00.000Z","2020-03-15T20:00:00.000Z","2020-03-15T21:00:00.000Z","2020-03-15T22:00:00.000Z","2020-03-15T23:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-16T01:00:00.000Z","2020-03-16T02:00:00.000Z","2020-03-16T03:00:00.000Z","2020-03-16T04:00:00.000Z","2020-03-16T05:00:00.000Z","2020-03-16T06:00:00.000Z","2020-03-16T07:00:00.000Z","2020-03-16T08:00:00.000Z","2020-03-16T09:00:00.000Z","2020-03-16T10:00:00.000Z","2020-03-16T11:00:00.000Z","2020-03-16T12:00:00.000Z","2020-03-16T13:00:00.000Z","2020-03-16T14:00:00.000Z","2020-03-16T15:00:00.000Z","2020-03-16T16:00:00.000Z","2020-03-16T17:00:00.000Z","2020-03-16T18:00:00.000Z","2020-03-16T19:00:00.000Z","2020-03-16T20:00:00.000Z","2020-03-16T21:00:00.000Z","2020-03-16T22:00:00.000Z","2020-03-16T23:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-17T01:00:00.000Z","2020-03-17T02:00:00.000Z","2020-03-17T03:00:00.000Z","2020-03-17T04:00:00.000Z","2020-03-17T05:00:00.000Z","2020-03-17T06:00:00.000Z","2020-03-17T07:00:00.000Z","2020-03-17T08:00:00.000Z","2020-03-17T09:00:00.000Z","2020-03-17T10:00:00.000Z","2020-03-17T11:00:00.000Z","2020-03-17T12:00:00.000Z","2020-03-17T13:00:00.000Z","2020-03-17T14:00:00.000Z","2020-03-17T15:00:00.000Z","2020-03-17T16:00:00.000Z","2020-03-17T17:00:00.000Z","2020-03-17T18:00:00.000Z","2020-03-17T19:00:00.000Z","2020-03-17T20:00:00.000Z","2020-03-17T21:00:00.000Z","2020-03-17T22:00:00.000Z","2020-03-17T23:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-18T01:00:00.000Z","2020-03-18T02:00:00.000Z","2020-03-18T03:00:00.000Z","2020-03-18T04:00:00.000Z","2020-03-18T05:00:00.000Z","2020-03-18T06:00:00.000Z","2020-03-18T07:00:00.000Z","2020-03-18T08:00:00.000Z","2020-03-18T09:00:00.000Z","2020-03-18T10:00:00.000Z","2020-03-18T11:00:00.000Z","2020-03-18T12:00:00.000Z","2020-03-18T13:00:00.000Z","2020-03-18T14:00:00.000Z","2020-03-18T15:00:00.000Z","2020-03-18T16:00:00.000Z","2020-03-18T17:00:00.000Z","2020-03-18T18:00:00.000Z","2020-03-18T19:00:00.000Z","2020-03-18T20:00:00.000Z","2020-03-18T21:00:00.000Z","2020-03-18T22:00:00.000Z","2020-03-18T23:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-19T01:00:00.000Z","2020-03-19T02:00:00.000Z","2020-03-19T03:00:00.000Z","2020-03-19T04:00:00.000Z","2020-03-19T05:00:00.000Z","2020-03-19T06:00:00.000Z","2020-03-19T07:00:00.000Z","2020-03-19T08:00:00.000Z","2020-03-19T09:00:00.000Z","2020-03-19T10:00:00.000Z","2020-03-19T11:00:00.000Z","2020-03-19T12:00:00.000Z","2020-03-19T13:00:00.000Z","2020-03-19T14:00:00.000Z","2020-03-19T15:00:00.000Z","2020-03-19T16:00:00.000Z","2020-03-19T17:00:00.000Z","2020-03-19T18:00:00.000Z","2020-03-19T19:00:00.000Z","2020-03-19T20:00:00.000Z","2020-03-19T21:00:00.000Z","2020-03-19T22:00:00.000Z","2020-03-19T23:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-20T01:00:00.000Z","2020-03-20T02:00:00.000Z","2020-03-20T03:00:00.000Z","2020-03-20T04:00:00.000Z","2020-03-20T05:00:00.000Z","2020-03-20T06:00:00.000Z","2020-03-20T07:00:00.000Z","2020-03-20T08:00:00.000Z","2020-03-20T09:00:00.000Z","2020-03-20T10:00:00.000Z","2020-03-20T11:00:00.000Z","2020-03-20T12:00:00.000Z","2020-03-20T13:00:00.000Z","2020-03-20T14:00:00.000Z","2020-03-20T15:00:00.000Z","2020-03-20T16:00:00.000Z","2020-03-20T17:00:00.000Z","2020-03-20T18:00:00.000Z","2020-03-20T19:00:00.000Z","2020-03-20T20:00:00.000Z","2020-03-20T21:00:00.000Z","2020-03-20T22:00:00.000Z","2020-03-20T23:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-21T01:00:00.000Z","2020-03-21T02:00:00.000Z","2020-03-21T03:00:00.000Z","2020-03-21T04:00:00.000Z","2020-03-21T05:00:00.000Z","2020-03-21T06:00:00.000Z","2020-03-21T07:00:00.000Z","2020-03-21T08:00:00.000Z","2020-03-21T09:00:00.000Z","2020-03-21T10:00:00.000Z","2020-03-21T11:00:00.000Z","2020-03-21T12:00:00.000Z","2020-03-21T13:00:00.000Z","2020-03-21T14:00:00.000Z","2020-03-21T15:00:00.000Z","2020-03-21T16:00:00.000Z","2020-03-21T17:00:00.000Z","2020-03-21T18:00:00.000Z","2020-03-21T19:00:00.000Z","2020-03-21T20:00:00.000Z","2020-03-21T21:00:00.000Z","2020-03-21T22:00:00.000Z","2020-03-21T23:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-22T01:00:00.000Z","2020-03-22T02:00:00.000Z","2020-03-22T03:00:00.000Z","2020-03-22T04:00:00.000Z","2020-03-22T05:00:00.000Z","2020-03-22T06:00:00.000Z","2020-03-22T07:00:00.000Z","2020-03-22T08:00:00.000Z","2020-03-22T09:00:00.000Z","2020-03-22T10:00:00.000Z","2020-03-22T11:00:00.000Z","2020-03-22T12:00:00.000Z","2020-03-22T13:00:00.000Z","2020-03-22T14:00:00.000Z","2020-03-22T15:00:00.000Z","2020-03-22T16:00:00.000Z","2020-03-22T17:00:00.000Z","2020-03-22T18:00:00.000Z","2020-03-22T19:00:00.000Z","2020-03-22T20:00:00.000Z","2020-03-22T21:00:00.000Z","2020-03-22T22:00:00.000Z","2020-03-22T23:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-23T01:00:00.000Z","2020-03-23T02:00:00.000Z","2020-03-23T03:00:00.000Z","2020-03-23T04:00:00.000Z","2020-03-23T05:00:00.000Z","2020-03-23T06:00:00.000Z","2020-03-23T07:00:00.000Z","2020-03-23T08:00:00.000Z","2020-03-23T09:00:00.000Z","2020-03-23T10:00:00.000Z","2020-03-23T11:00:00.000Z","2020-03-23T12:00:00.000Z","2020-03-23T13:00:00.000Z","2020-03-23T14:00:00.000Z","2020-03-23T15:00:00.000Z","2020-03-23T16:00:00.000Z","2020-03-23T17:00:00.000Z","2020-03-23T18:00:00.000Z","2020-03-23T19:00:00.000Z","2020-03-23T20:00:00.000Z","2020-03-23T21:00:00.000Z","2020-03-23T22:00:00.000Z","2020-03-23T23:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-24T01:00:00.000Z","2020-03-24T02:00:00.000Z","2020-03-24T03:00:00.000Z","2020-03-24T04:00:00.000Z","2020-03-24T05:00:00.000Z","2020-03-24T06:00:00.000Z","2020-03-24T07:00:00.000Z","2020-03-24T08:00:00.000Z","2020-03-24T09:00:00.000Z","2020-03-24T10:00:00.000Z","2020-03-24T11:00:00.000Z","2020-03-24T12:00:00.000Z","2020-03-24T13:00:00.000Z","2020-03-24T14:00:00.000Z","2020-03-24T15:00:00.000Z","2020-03-24T16:00:00.000Z","2020-03-24T17:00:00.000Z","2020-03-24T18:00:00.000Z","2020-03-24T19:00:00.000Z","2020-03-24T20:00:00.000Z","2020-03-24T21:00:00.000Z","2020-03-24T22:00:00.000Z","2020-03-24T23:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-25T01:00:00.000Z","2020-03-25T02:00:00.000Z","2020-03-25T03:00:00.000Z","2020-03-25T04:00:00.000Z","2020-03-25T05:00:00.000Z","2020-03-25T06:00:00.000Z","2020-03-25T07:00:00.000Z","2020-03-25T08:00:00.000Z","2020-03-25T09:00:00.000Z","2020-03-25T10:00:00.000Z","2020-03-25T11:00:00.000Z","2020-03-25T12:00:00.000Z","2020-03-25T13:00:00.000Z","2020-03-25T14:00:00.000Z","2020-03-25T15:00:00.000Z","2020-03-25T16:00:00.000Z","2020-03-25T17:00:00.000Z","2020-03-25T18:00:00.000Z","2020-03-25T19:00:00.000Z","2020-03-25T20:00:00.000Z","2020-03-25T21:00:00.000Z","2020-03-25T22:00:00.000Z","2020-03-25T23:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-26T01:00:00.000Z","2020-03-26T02:00:00.000Z","2020-03-26T03:00:00.000Z","2020-03-26T04:00:00.000Z","2020-03-26T05:00:00.000Z","2020-03-26T06:00:00.000Z","2020-03-26T07:00:00.000Z","2020-03-26T08:00:00.000Z","2020-03-26T09:00:00.000Z","2020-03-26T10:00:00.000Z","2020-03-26T11:00:00.000Z","2020-03-26T12:00:00.000Z","2020-03-26T13:00:00.000Z","2020-03-26T14:00:00.000Z","2020-03-26T15:00:00.000Z","2020-03-26T16:00:00.000Z","2020-03-26T17:00:00.000Z","2020-03-26T18:00:00.000Z","2020-03-26T19:00:00.000Z","2020-03-26T20:00:00.000Z","2020-03-26T21:00:00.000Z","2020-03-26T22:00:00.000Z","2020-03-26T23:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-27T01:00:00.000Z","2020-03-27T02:00:00.000Z","2020-03-27T03:00:00.000Z","2020-03-27T04:00:00.000Z","2020-03-27T05:00:00.000Z","2020-03-27T06:00:00.000Z","2020-03-27T07:00:00.000Z","2020-03-27T08:00:00.000Z","2020-03-27T09:00:00.000Z","2020-03-27T10:00:00.000Z","2020-03-27T11:00:00.000Z","2020-03-27T12:00:00.000Z","2020-03-27T13:00:00.000Z","2020-03-27T14:00:00.000Z","2020-03-27T15:00:00.000Z","2020-03-27T16:00:00.000Z","2020-03-27T17:00:00.000Z","2020-03-27T18:00:00.000Z","2020-03-27T19:00:00.000Z","2020-03-27T20:00:00.000Z","2020-03-27T21:00:00.000Z","2020-03-27T22:00:00.000Z","2020-03-27T23:00:00.000Z","2020-03-28T00:00:00.000Z","2020-03-28T01:00:00.000Z","2020-03-28T02:00:00.000Z","2020-03-28T03:00:00.000Z","2020-03-28T04:00:00.000Z","2020-03-28T05:00:00.000Z","2020-03-28T06:00:00.000Z","2020-03-28T07:00:00.000Z","2020-03-28T08:00:00.000Z","2020-03-28T09:00:00.000Z","2020-03-28T10:00:00.000Z","2020-03-28T11:00:00.000Z","2020-03-28T12:00:00.000Z","2020-03-28T13:00:00.000Z","2020-03-28T14:00:00.000Z","2020-03-28T15:00:00.000Z","2020-03-28T16:00:00.000Z","2020-03-28T17:00:00.000Z","2020-03-28T18:00:00.000Z","2020-03-28T19:00:00.000Z","2020-03-28T20:00:00.000Z","2020-03-28T21:00:00.000Z","2020-03-28T22:00:00.000Z","2020-03-28T23:00:00.000Z","2020-03-29T00:00:00.000Z","2020-03-29T01:00:00.000Z","2020-03-29T02:00:00.000Z","2020-03-29T03:00:00.000Z","2020-03-29T04:00:00.000Z","2020-03-29T05:00:00.000Z","2020-03-29T06:00:00.000Z","2020-03-29T07:00:00.000Z","2020-03-29T08:00:00.000Z","2020-03-29T09:00:00.000Z","2020-03-29T10:00:00.000Z","2020-03-29T11:00:00.000Z","2020-03-29T12:00:00.000Z","2020-03-29T13:00:00.000Z","2020-03-29T14:00:00.000Z","2020-03-29T15:00:00.000Z","2020-03-29T16:00:00.000Z","2020-03-29T17:00:00.000Z","2020-03-29T18:00:00.000Z","2020-03-29T19:00:00.000Z","2020-03-29T20:00:00.000Z","2020-03-29T21:00:00.000Z","2020-03-29T22:00:00.000Z","2020-03-29T23:00:00.000Z","2020-03-30T00:00:00.000Z","2020-03-30T01:00:00.000Z","2020-03-30T02:00:00.000Z","2020-03-30T03:00:00.000Z","2020-03-30T04:00:00.000Z","2020-03-30T05:00:00.000Z","2020-03-30T06:00:00.000Z","2020-03-30T07:00:00.000Z","2020-03-30T08:00:00.000Z","2020-03-30T09:00:00.000Z","2020-03-30T10:00:00.000Z","2020-03-30T11:00:00.000Z","2020-03-30T12:00:00.000Z","2020-03-30T13:00:00.000Z","2020-03-30T14:00:00.000Z","2020-03-30T15:00:00.000Z","2020-03-30T16:00:00.000Z","2020-03-30T17:00:00.000Z","2020-03-30T18:00:00.000Z","2020-03-30T19:00:00.000Z","2020-03-30T20:00:00.000Z","2020-03-30T21:00:00.000Z","2020-03-30T22:00:00.000Z","2020-03-30T23:00:00.000Z","2020-03-31T00:00:00.000Z","2020-03-31T01:00:00.000Z","2020-03-31T02:00:00.000Z","2020-03-31T03:00:00.000Z","2020-03-31T04:00:00.000Z","2020-03-31T05:00:00.000Z","2020-03-31T06:00:00.000Z","2020-03-31T07:00:00.000Z","2020-03-31T08:00:00.000Z","2020-03-31T09:00:00.000Z","2020-03-31T10:00:00.000Z","2020-03-31T11:00:00.000Z","2020-03-31T12:00:00.000Z","2020-03-31T13:00:00.000Z","2020-03-31T14:00:00.000Z","2020-03-31T15:00:00.000Z","2020-03-31T16:00:00.000Z","2020-03-31T17:00:00.000Z","2020-03-31T18:00:00.000Z","2020-03-31T19:00:00.000Z","2020-03-31T20:00:00.000Z","2020-03-31T21:00:00.000Z","2020-03-31T22:00:00.000Z"],[16,30,12,10,16,12,19,15,13,8,17,80,147,102,53,43,40,38,49,62,63,54,57,36,38,58,47,29,26,46,33,20,22,18,21,50,35,35,21,13,20,36,28,21,24,32,19,20,18,9,33,24,25,6,17,18,12,17,6,14,11,17,11,15,20,25,15,6,14,8,8,11,10,17,22,23,6,10,12,18,18,7,13,10,60,51,63,39,29,25,24,23,20,27,39,17,27,16,15,13,10,11,15,7,16,15,19,15,16,15,11,20,20,7,4,9,15,5,24,20,18,12,9,9,12,14,8,16,15,14,10,14,9,13,13,18,19,17,17,11,19,21,24,18,34,75,58,49,34,46,37,26,32,29,18,16,35,28,19,19,15,10,11,18,20,20,30,23,28,21,87,43,69,94,98,53,71,53,84,63,44,40,33,50,91,53,43,42,37,44,57,57,22,0,0,2,97,85,47,76,58,78,52,56,53,39,24,20,19,23,14,17,34,36,43,43,36,51,38,52,61,41,30,32,31,41,45,35,31,34,28,16,16,14,16,7,8,10,13,26,18,49,23,72,48,59,62,53,44,55,50,43,59,75,50,45,39,38,40,50,27,27,30,58,48,54,35,66,52,42,78,49,65,66,51,40,36,55,39,41,39,19,14,41,71,54,54,57,76,71,34,54,45,40,48,52,57,51,60,69,66,70,50,31,37,35,22,35,29,64,58,62,43,43,76,130,50,42,56,41,41,48,89,74,60,36,36,41,33,29,25,20,24,16,23,68,51,35,76,76,32,52,89,105,55,85,51,71,64,50,48,30,54,52,29,31,50,43,30,46,43,41,36,47,83,73,64,37,37,57,34,30,42,24,32,24,24,24,29,19,21,38,31,23,93,51,65,52,46,40,87,70,82,96,74,75,46,70,55,33,31,26,42,50,38,61,37,35,81,30,43,75,60,41,41,47,31,29,30,41,68,45,42,86,62,76,55,44,38,37,49,33,28,37,31,43,26,45,41,36,41,52,33,57,43,18,55,49,68,131,75,50,39,46,32,51,88,47,77,53,47,92,38,44,40,51,213,108,81,44,36,37,21,28,30,47,37,41,54,52,58,59,58,58,50,45,73,33]],"fixedtz":false,"tzone":"UTC","plugins":{"Unzoom":"{}","Crosshair":{"direction":"both"}}},"evals":["attrs.interactionModel","plugins.Unzoom"],"jsHooks":[]}</script>
+<div id="covid-tweets-and-identities-with-24h-roll" class="section level2">
+<h2>Covid Tweets and Identities with 24H roll</h2>
+<pre class="r"><code>data_xts$asian_slur_tweet_count%&gt;% 
+  # head(100) %&gt;% 
+  dygraph(main = &quot;Tweets Matching The Identity Patterns 24H Roll&quot;) %&gt;% 
+  dyRangeSelector() %&gt;% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %&gt;% 
+  dyRangeSelector(height = 50) %&gt;% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %&gt;%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %&gt;% 
+  dyRoller(rollPeriod = 24) %&gt;% 
+  dyUnzoom() %&gt;% 
+  dyCrosshair() %&gt;% 
+  dyOptions(colors = RColorBrewer::brewer.pal(4, &quot;Set1&quot;))</code></pre>
+<div id="htmlwidget-c8c12f719c54c2e4ace3" style="width:1056px;height:576px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c8c12f719c54c2e4ace3">{"x":{"attrs":{"title":"Tweets Matching The Identity Patterns 24H Roll","labels":["hour","asian_slur_tweet_count"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"showRangeSelector":true,"rangeSelectorHeight":50,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel","highlightSeriesOpts":{"strokeWidth":2},"highlightCircleSize":3,"highlightSeriesBackgroundAlpha":0.5,"hideOverlayOnMouseOut":true,"showRoller":true,"rollPeriod":24,"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#E41A1C","#377EB8","#4DAF4A","#984EA3"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false},"scale":"hourly","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-03-11T15:00:00.000Z","2020-03-11T16:00:00.000Z","2020-03-11T17:00:00.000Z","2020-03-11T18:00:00.000Z","2020-03-11T19:00:00.000Z","2020-03-11T20:00:00.000Z","2020-03-11T21:00:00.000Z","2020-03-11T22:00:00.000Z","2020-03-11T23:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-12T01:00:00.000Z","2020-03-12T02:00:00.000Z","2020-03-12T03:00:00.000Z","2020-03-12T04:00:00.000Z","2020-03-12T05:00:00.000Z","2020-03-12T06:00:00.000Z","2020-03-12T07:00:00.000Z","2020-03-12T08:00:00.000Z","2020-03-12T09:00:00.000Z","2020-03-12T10:00:00.000Z","2020-03-12T11:00:00.000Z","2020-03-12T12:00:00.000Z","2020-03-12T13:00:00.000Z","2020-03-12T14:00:00.000Z","2020-03-12T15:00:00.000Z","2020-03-12T16:00:00.000Z","2020-03-12T17:00:00.000Z","2020-03-12T18:00:00.000Z","2020-03-12T19:00:00.000Z","2020-03-12T20:00:00.000Z","2020-03-12T21:00:00.000Z","2020-03-12T22:00:00.000Z","2020-03-12T23:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-13T01:00:00.000Z","2020-03-13T02:00:00.000Z","2020-03-13T03:00:00.000Z","2020-03-13T04:00:00.000Z","2020-03-13T05:00:00.000Z","2020-03-13T06:00:00.000Z","2020-03-13T07:00:00.000Z","2020-03-13T08:00:00.000Z","2020-03-13T09:00:00.000Z","2020-03-13T10:00:00.000Z","2020-03-13T11:00:00.000Z","2020-03-13T12:00:00.000Z","2020-03-13T13:00:00.000Z","2020-03-13T14:00:00.000Z","2020-03-13T15:00:00.000Z","2020-03-13T16:00:00.000Z","2020-03-13T17:00:00.000Z","2020-03-13T18:00:00.000Z","2020-03-13T19:00:00.000Z","2020-03-13T20:00:00.000Z","2020-03-13T21:00:00.000Z","2020-03-13T22:00:00.000Z","2020-03-13T23:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-14T01:00:00.000Z","2020-03-14T02:00:00.000Z","2020-03-14T03:00:00.000Z","2020-03-14T04:00:00.000Z","2020-03-14T05:00:00.000Z","2020-03-14T06:00:00.000Z","2020-03-14T07:00:00.000Z","2020-03-14T08:00:00.000Z","2020-03-14T09:00:00.000Z","2020-03-14T10:00:00.000Z","2020-03-14T11:00:00.000Z","2020-03-14T12:00:00.000Z","2020-03-14T13:00:00.000Z","2020-03-14T14:00:00.000Z","2020-03-14T15:00:00.000Z","2020-03-14T16:00:00.000Z","2020-03-14T17:00:00.000Z","2020-03-14T18:00:00.000Z","2020-03-14T19:00:00.000Z","2020-03-14T20:00:00.000Z","2020-03-14T21:00:00.000Z","2020-03-14T22:00:00.000Z","2020-03-14T23:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-15T01:00:00.000Z","2020-03-15T02:00:00.000Z","2020-03-15T03:00:00.000Z","2020-03-15T04:00:00.000Z","2020-03-15T05:00:00.000Z","2020-03-15T06:00:00.000Z","2020-03-15T07:00:00.000Z","2020-03-15T08:00:00.000Z","2020-03-15T09:00:00.000Z","2020-03-15T10:00:00.000Z","2020-03-15T11:00:00.000Z","2020-03-15T12:00:00.000Z","2020-03-15T13:00:00.000Z","2020-03-15T14:00:00.000Z","2020-03-15T15:00:00.000Z","2020-03-15T16:00:00.000Z","2020-03-15T17:00:00.000Z","2020-03-15T18:00:00.000Z","2020-03-15T19:00:00.000Z","2020-03-15T20:00:00.000Z","2020-03-15T21:00:00.000Z","2020-03-15T22:00:00.000Z","2020-03-15T23:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-16T01:00:00.000Z","2020-03-16T02:00:00.000Z","2020-03-16T03:00:00.000Z","2020-03-16T04:00:00.000Z","2020-03-16T05:00:00.000Z","2020-03-16T06:00:00.000Z","2020-03-16T07:00:00.000Z","2020-03-16T08:00:00.000Z","2020-03-16T09:00:00.000Z","2020-03-16T10:00:00.000Z","2020-03-16T11:00:00.000Z","2020-03-16T12:00:00.000Z","2020-03-16T13:00:00.000Z","2020-03-16T14:00:00.000Z","2020-03-16T15:00:00.000Z","2020-03-16T16:00:00.000Z","2020-03-16T17:00:00.000Z","2020-03-16T18:00:00.000Z","2020-03-16T19:00:00.000Z","2020-03-16T20:00:00.000Z","2020-03-16T21:00:00.000Z","2020-03-16T22:00:00.000Z","2020-03-16T23:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-17T01:00:00.000Z","2020-03-17T02:00:00.000Z","2020-03-17T03:00:00.000Z","2020-03-17T04:00:00.000Z","2020-03-17T05:00:00.000Z","2020-03-17T06:00:00.000Z","2020-03-17T07:00:00.000Z","2020-03-17T08:00:00.000Z","2020-03-17T09:00:00.000Z","2020-03-17T10:00:00.000Z","2020-03-17T11:00:00.000Z","2020-03-17T12:00:00.000Z","2020-03-17T13:00:00.000Z","2020-03-17T14:00:00.000Z","2020-03-17T15:00:00.000Z","2020-03-17T16:00:00.000Z","2020-03-17T17:00:00.000Z","2020-03-17T18:00:00.000Z","2020-03-17T19:00:00.000Z","2020-03-17T20:00:00.000Z","2020-03-17T21:00:00.000Z","2020-03-17T22:00:00.000Z","2020-03-17T23:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-18T01:00:00.000Z","2020-03-18T02:00:00.000Z","2020-03-18T03:00:00.000Z","2020-03-18T04:00:00.000Z","2020-03-18T05:00:00.000Z","2020-03-18T06:00:00.000Z","2020-03-18T07:00:00.000Z","2020-03-18T08:00:00.000Z","2020-03-18T09:00:00.000Z","2020-03-18T10:00:00.000Z","2020-03-18T11:00:00.000Z","2020-03-18T12:00:00.000Z","2020-03-18T13:00:00.000Z","2020-03-18T14:00:00.000Z","2020-03-18T15:00:00.000Z","2020-03-18T16:00:00.000Z","2020-03-18T17:00:00.000Z","2020-03-18T18:00:00.000Z","2020-03-18T19:00:00.000Z","2020-03-18T20:00:00.000Z","2020-03-18T21:00:00.000Z","2020-03-18T22:00:00.000Z","2020-03-18T23:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-19T01:00:00.000Z","2020-03-19T02:00:00.000Z","2020-03-19T03:00:00.000Z","2020-03-19T04:00:00.000Z","2020-03-19T05:00:00.000Z","2020-03-19T06:00:00.000Z","2020-03-19T07:00:00.000Z","2020-03-19T08:00:00.000Z","2020-03-19T09:00:00.000Z","2020-03-19T10:00:00.000Z","2020-03-19T11:00:00.000Z","2020-03-19T12:00:00.000Z","2020-03-19T13:00:00.000Z","2020-03-19T14:00:00.000Z","2020-03-19T15:00:00.000Z","2020-03-19T16:00:00.000Z","2020-03-19T17:00:00.000Z","2020-03-19T18:00:00.000Z","2020-03-19T19:00:00.000Z","2020-03-19T20:00:00.000Z","2020-03-19T21:00:00.000Z","2020-03-19T22:00:00.000Z","2020-03-19T23:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-20T01:00:00.000Z","2020-03-20T02:00:00.000Z","2020-03-20T03:00:00.000Z","2020-03-20T04:00:00.000Z","2020-03-20T05:00:00.000Z","2020-03-20T06:00:00.000Z","2020-03-20T07:00:00.000Z","2020-03-20T08:00:00.000Z","2020-03-20T09:00:00.000Z","2020-03-20T10:00:00.000Z","2020-03-20T11:00:00.000Z","2020-03-20T12:00:00.000Z","2020-03-20T13:00:00.000Z","2020-03-20T14:00:00.000Z","2020-03-20T15:00:00.000Z","2020-03-20T16:00:00.000Z","2020-03-20T17:00:00.000Z","2020-03-20T18:00:00.000Z","2020-03-20T19:00:00.000Z","2020-03-20T20:00:00.000Z","2020-03-20T21:00:00.000Z","2020-03-20T22:00:00.000Z","2020-03-20T23:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-21T01:00:00.000Z","2020-03-21T02:00:00.000Z","2020-03-21T03:00:00.000Z","2020-03-21T04:00:00.000Z","2020-03-21T05:00:00.000Z","2020-03-21T06:00:00.000Z","2020-03-21T07:00:00.000Z","2020-03-21T08:00:00.000Z","2020-03-21T09:00:00.000Z","2020-03-21T10:00:00.000Z","2020-03-21T11:00:00.000Z","2020-03-21T12:00:00.000Z","2020-03-21T13:00:00.000Z","2020-03-21T14:00:00.000Z","2020-03-21T15:00:00.000Z","2020-03-21T16:00:00.000Z","2020-03-21T17:00:00.000Z","2020-03-21T18:00:00.000Z","2020-03-21T19:00:00.000Z","2020-03-21T20:00:00.000Z","2020-03-21T21:00:00.000Z","2020-03-21T22:00:00.000Z","2020-03-21T23:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-22T01:00:00.000Z","2020-03-22T02:00:00.000Z","2020-03-22T03:00:00.000Z","2020-03-22T04:00:00.000Z","2020-03-22T05:00:00.000Z","2020-03-22T06:00:00.000Z","2020-03-22T07:00:00.000Z","2020-03-22T08:00:00.000Z","2020-03-22T09:00:00.000Z","2020-03-22T10:00:00.000Z","2020-03-22T11:00:00.000Z","2020-03-22T12:00:00.000Z","2020-03-22T13:00:00.000Z","2020-03-22T14:00:00.000Z","2020-03-22T15:00:00.000Z","2020-03-22T16:00:00.000Z","2020-03-22T17:00:00.000Z","2020-03-22T18:00:00.000Z","2020-03-22T19:00:00.000Z","2020-03-22T20:00:00.000Z","2020-03-22T21:00:00.000Z","2020-03-22T22:00:00.000Z","2020-03-22T23:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-23T01:00:00.000Z","2020-03-23T02:00:00.000Z","2020-03-23T03:00:00.000Z","2020-03-23T04:00:00.000Z","2020-03-23T05:00:00.000Z","2020-03-23T06:00:00.000Z","2020-03-23T07:00:00.000Z","2020-03-23T08:00:00.000Z","2020-03-23T09:00:00.000Z","2020-03-23T10:00:00.000Z","2020-03-23T11:00:00.000Z","2020-03-23T12:00:00.000Z","2020-03-23T13:00:00.000Z","2020-03-23T14:00:00.000Z","2020-03-23T15:00:00.000Z","2020-03-23T16:00:00.000Z","2020-03-23T17:00:00.000Z","2020-03-23T18:00:00.000Z","2020-03-23T19:00:00.000Z","2020-03-23T20:00:00.000Z","2020-03-23T21:00:00.000Z","2020-03-23T22:00:00.000Z","2020-03-23T23:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-24T01:00:00.000Z","2020-03-24T02:00:00.000Z","2020-03-24T03:00:00.000Z","2020-03-24T04:00:00.000Z","2020-03-24T05:00:00.000Z","2020-03-24T06:00:00.000Z","2020-03-24T07:00:00.000Z","2020-03-24T08:00:00.000Z","2020-03-24T09:00:00.000Z","2020-03-24T10:00:00.000Z","2020-03-24T11:00:00.000Z","2020-03-24T12:00:00.000Z","2020-03-24T13:00:00.000Z","2020-03-24T14:00:00.000Z","2020-03-24T15:00:00.000Z","2020-03-24T16:00:00.000Z","2020-03-24T17:00:00.000Z","2020-03-24T18:00:00.000Z","2020-03-24T19:00:00.000Z","2020-03-24T20:00:00.000Z","2020-03-24T21:00:00.000Z","2020-03-24T22:00:00.000Z","2020-03-24T23:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-25T01:00:00.000Z","2020-03-25T02:00:00.000Z","2020-03-25T03:00:00.000Z","2020-03-25T04:00:00.000Z","2020-03-25T05:00:00.000Z","2020-03-25T06:00:00.000Z","2020-03-25T07:00:00.000Z","2020-03-25T08:00:00.000Z","2020-03-25T09:00:00.000Z","2020-03-25T10:00:00.000Z","2020-03-25T11:00:00.000Z","2020-03-25T12:00:00.000Z","2020-03-25T13:00:00.000Z","2020-03-25T14:00:00.000Z","2020-03-25T15:00:00.000Z","2020-03-25T16:00:00.000Z","2020-03-25T17:00:00.000Z","2020-03-25T18:00:00.000Z","2020-03-25T19:00:00.000Z","2020-03-25T20:00:00.000Z","2020-03-25T21:00:00.000Z","2020-03-25T22:00:00.000Z","2020-03-25T23:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-26T01:00:00.000Z","2020-03-26T02:00:00.000Z","2020-03-26T03:00:00.000Z","2020-03-26T04:00:00.000Z","2020-03-26T05:00:00.000Z","2020-03-26T06:00:00.000Z","2020-03-26T07:00:00.000Z","2020-03-26T08:00:00.000Z","2020-03-26T09:00:00.000Z","2020-03-26T10:00:00.000Z","2020-03-26T11:00:00.000Z","2020-03-26T12:00:00.000Z","2020-03-26T13:00:00.000Z","2020-03-26T14:00:00.000Z","2020-03-26T15:00:00.000Z","2020-03-26T16:00:00.000Z","2020-03-26T17:00:00.000Z","2020-03-26T18:00:00.000Z","2020-03-26T19:00:00.000Z","2020-03-26T20:00:00.000Z","2020-03-26T21:00:00.000Z","2020-03-26T22:00:00.000Z","2020-03-26T23:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-27T01:00:00.000Z","2020-03-27T02:00:00.000Z","2020-03-27T03:00:00.000Z","2020-03-27T04:00:00.000Z","2020-03-27T05:00:00.000Z","2020-03-27T06:00:00.000Z","2020-03-27T07:00:00.000Z","2020-03-27T08:00:00.000Z","2020-03-27T09:00:00.000Z","2020-03-27T10:00:00.000Z","2020-03-27T11:00:00.000Z","2020-03-27T12:00:00.000Z","2020-03-27T13:00:00.000Z","2020-03-27T14:00:00.000Z","2020-03-27T15:00:00.000Z","2020-03-27T16:00:00.000Z","2020-03-27T17:00:00.000Z","2020-03-27T18:00:00.000Z","2020-03-27T19:00:00.000Z","2020-03-27T20:00:00.000Z","2020-03-27T21:00:00.000Z","2020-03-27T22:00:00.000Z","2020-03-27T23:00:00.000Z","2020-03-28T00:00:00.000Z","2020-03-28T01:00:00.000Z","2020-03-28T02:00:00.000Z","2020-03-28T03:00:00.000Z","2020-03-28T04:00:00.000Z","2020-03-28T05:00:00.000Z","2020-03-28T06:00:00.000Z","2020-03-28T07:00:00.000Z","2020-03-28T08:00:00.000Z","2020-03-28T09:00:00.000Z","2020-03-28T10:00:00.000Z","2020-03-28T11:00:00.000Z","2020-03-28T12:00:00.000Z","2020-03-28T13:00:00.000Z","2020-03-28T14:00:00.000Z","2020-03-28T15:00:00.000Z","2020-03-28T16:00:00.000Z","2020-03-28T17:00:00.000Z","2020-03-28T18:00:00.000Z","2020-03-28T19:00:00.000Z","2020-03-28T20:00:00.000Z","2020-03-28T21:00:00.000Z","2020-03-28T22:00:00.000Z","2020-03-28T23:00:00.000Z","2020-03-29T00:00:00.000Z","2020-03-29T01:00:00.000Z","2020-03-29T02:00:00.000Z","2020-03-29T03:00:00.000Z","2020-03-29T04:00:00.000Z","2020-03-29T05:00:00.000Z","2020-03-29T06:00:00.000Z","2020-03-29T07:00:00.000Z","2020-03-29T08:00:00.000Z","2020-03-29T09:00:00.000Z","2020-03-29T10:00:00.000Z","2020-03-29T11:00:00.000Z","2020-03-29T12:00:00.000Z","2020-03-29T13:00:00.000Z","2020-03-29T14:00:00.000Z","2020-03-29T15:00:00.000Z","2020-03-29T16:00:00.000Z","2020-03-29T17:00:00.000Z","2020-03-29T18:00:00.000Z","2020-03-29T19:00:00.000Z","2020-03-29T20:00:00.000Z","2020-03-29T21:00:00.000Z","2020-03-29T22:00:00.000Z","2020-03-29T23:00:00.000Z","2020-03-30T00:00:00.000Z","2020-03-30T01:00:00.000Z","2020-03-30T02:00:00.000Z","2020-03-30T03:00:00.000Z","2020-03-30T04:00:00.000Z","2020-03-30T05:00:00.000Z","2020-03-30T06:00:00.000Z","2020-03-30T07:00:00.000Z","2020-03-30T08:00:00.000Z","2020-03-30T09:00:00.000Z","2020-03-30T10:00:00.000Z","2020-03-30T11:00:00.000Z","2020-03-30T12:00:00.000Z","2020-03-30T13:00:00.000Z","2020-03-30T14:00:00.000Z","2020-03-30T15:00:00.000Z","2020-03-30T16:00:00.000Z","2020-03-30T17:00:00.000Z","2020-03-30T18:00:00.000Z","2020-03-30T19:00:00.000Z","2020-03-30T20:00:00.000Z","2020-03-30T21:00:00.000Z","2020-03-30T22:00:00.000Z","2020-03-30T23:00:00.000Z","2020-03-31T00:00:00.000Z","2020-03-31T01:00:00.000Z","2020-03-31T02:00:00.000Z","2020-03-31T03:00:00.000Z","2020-03-31T04:00:00.000Z","2020-03-31T05:00:00.000Z","2020-03-31T06:00:00.000Z","2020-03-31T07:00:00.000Z","2020-03-31T08:00:00.000Z","2020-03-31T09:00:00.000Z","2020-03-31T10:00:00.000Z","2020-03-31T11:00:00.000Z","2020-03-31T12:00:00.000Z","2020-03-31T13:00:00.000Z","2020-03-31T14:00:00.000Z","2020-03-31T15:00:00.000Z","2020-03-31T16:00:00.000Z","2020-03-31T17:00:00.000Z","2020-03-31T18:00:00.000Z","2020-03-31T19:00:00.000Z","2020-03-31T20:00:00.000Z","2020-03-31T21:00:00.000Z","2020-03-31T22:00:00.000Z"],[16,30,12,10,16,12,19,15,13,8,17,80,147,102,53,43,40,38,49,62,63,54,57,36,38,58,47,29,26,46,33,20,22,18,21,50,35,35,21,13,20,36,28,21,24,32,19,20,18,9,33,24,25,6,17,18,12,17,6,14,11,17,11,15,20,25,15,6,14,8,8,11,10,17,22,23,6,10,12,18,18,7,13,10,60,51,63,39,29,25,24,23,20,27,39,17,27,16,15,13,10,11,15,7,16,15,19,15,16,15,11,20,20,7,4,9,15,5,24,20,18,12,9,9,12,14,8,16,15,14,10,14,9,13,13,18,19,17,17,11,19,21,24,18,34,75,58,49,34,46,37,26,32,29,18,16,35,28,19,19,15,10,11,18,20,20,30,23,28,21,87,43,69,94,98,53,71,53,84,63,44,40,33,50,91,53,43,42,37,44,57,57,22,0,0,2,97,85,47,76,58,78,52,56,53,39,24,20,19,23,14,17,34,36,43,43,36,51,38,52,61,41,30,32,31,41,45,35,31,34,28,16,16,14,16,7,8,10,13,26,18,49,23,72,48,59,62,53,44,55,50,43,59,75,50,45,39,38,40,50,27,27,30,58,48,54,35,66,52,42,78,49,65,66,51,40,36,55,39,41,39,19,14,41,71,54,54,57,76,71,34,54,45,40,48,52,57,51,60,69,66,70,50,31,37,35,22,35,29,64,58,62,43,43,76,130,50,42,56,41,41,48,89,74,60,36,36,41,33,29,25,20,24,16,23,68,51,35,76,76,32,52,89,105,55,85,51,71,64,50,48,30,54,52,29,31,50,43,30,46,43,41,36,47,83,73,64,37,37,57,34,30,42,24,32,24,24,24,29,19,21,38,31,23,93,51,65,52,46,40,87,70,82,96,74,75,46,70,55,33,31,26,42,50,38,61,37,35,81,30,43,75,60,41,41,47,31,29,30,41,68,45,42,86,62,76,55,44,38,37,49,33,28,37,31,43,26,45,41,36,41,52,33,57,43,18,55,49,68,131,75,50,39,46,32,51,88,47,77,53,47,92,38,44,40,51,213,108,81,44,36,37,21,28,30,47,37,41,54,52,58,59,58,58,50,45,73,33]],"fixedtz":false,"tzone":"UTC","plugins":{"Unzoom":"{}","Crosshair":{"direction":"both"}}},"evals":["attrs.interactionModel","plugins.Unzoom"],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="covid-tweets-with-sums" class="section level1">
+<h1>Covid Tweets With Sums</h1>
+<pre class="r"><code>data_xts %&gt;% 
+  # head(100) %&gt;% 
+  dygraph(main = &quot;Tweets Matching The Identity Patterns&quot;) %&gt;% 
+  dyRangeSelector() %&gt;% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %&gt;% 
+  dyRangeSelector(height = 50) %&gt;% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %&gt;% 
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %&gt;% 
+  dyOptions(colors = RColorBrewer::brewer.pal(6, &quot;Dark2&quot;)) %&gt;% 
+  dyUnzoom() %&gt;% 
+  dyCrosshair()</code></pre>
+<div id="covid-tweets-with-sums-with-24h-roll" class="section level2">
+<h2>Covid Tweets With Sums with 24H roll</h2>
+<pre class="r"><code>data_xts %&gt;% 
+  # head(100) %&gt;% 
+  dygraph(main = &quot;Tweets Matching The Identity Patterns&quot;) %&gt;% 
+  dyRangeSelector() %&gt;% 
+  dyOptions(drawPoints = TRUE, pointSize = 1) %&gt;% 
+  dyRangeSelector(height = 50) %&gt;% 
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %&gt;% 
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %&gt;% 
+  dyOptions(colors = RColorBrewer::brewer.pal(6, &quot;Dark2&quot;)) %&gt;% 
+  dyRoller(rollPeriod = 24) %&gt;% 
+  dyUnzoom() %&gt;% 
+  dyCrosshair()</code></pre>
+</div>
+<div id="work-with-plotly" class="section level2">
+<h2>Work With Plotly</h2>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.1 (2019-07-05)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] xts_0.11-2       zoo_1.8-6        dygraphs_1.1.1.6 forcats_0.4.0   
+ [5] stringr_1.4.0    dplyr_0.8.5      purrr_0.3.3      readr_1.3.1     
+ [9] tidyr_1.0.0      tibble_2.1.3     ggplot2_3.3.0    tidyverse_1.2.1 
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_0.2.5   xfun_0.9           haven_2.1.1       
+ [4] lattice_0.20-38    colorspace_1.4-1   vctrs_0.2.4       
+ [7] generics_0.0.2     htmltools_0.3.6    yaml_2.2.0        
+[10] rlang_0.4.7        pillar_1.4.3       glue_1.3.1        
+[13] withr_2.1.2        RColorBrewer_1.1-2 modelr_0.1.5      
+[16] readxl_1.3.1       lifecycle_0.1.0    munsell_0.5.0     
+[19] gtable_0.3.0       workflowr_1.4.0    cellranger_1.1.0  
+[22] rvest_0.3.4        htmlwidgets_1.3    evaluate_0.14     
+[25] knitr_1.25         fansi_0.4.0        broom_0.5.4       
+[28] Rcpp_1.0.5         scales_1.0.0       backports_1.1.5   
+[31] jsonlite_1.6       fs_1.3.1           hms_0.5.2         
+[34] digest_0.6.23      stringi_1.4.3      grid_3.6.1        
+[37] rprojroot_1.3-2    cli_2.0.1          tools_3.6.1       
+[40] rtweet_0.6.8       magrittr_1.5       crayon_1.3.4      
+[43] pkgconfig_2.0.3    ellipsis_0.3.0     xml2_1.2.2        
+[46] lubridate_1.7.4    assertthat_0.2.1   rmarkdown_2.1     
+[49] httr_1.4.1         rstudioapi_0.11    R6_2.4.0          
+[52] nlme_3.1-141       git2r_0.26.1       compiler_3.6.1    </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

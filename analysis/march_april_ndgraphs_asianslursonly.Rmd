@@ -18,18 +18,60 @@ knitr::opts_chunk$set(fig.width=11, fig.height=6)
 ```
 
 
-```{r, data_aggregate}
 
-april <- read_rds(here::here("/data/corona_data/timeseries/april_2020_aggregated_timeseries_xts.rds"))
+```{r}
 
-april <- april[-1]
+read_and_merge <- function(path){
+   data <- read_csv(path,
+                 col_types = cols_only(text='c', 
+                                       created_at='?', 
+                                       pattern_asian_bool = "l",
+                                       pattern_asian_match = "c", 
+                                       is_retweet = "l")
+)
+  return(data)
 
-march <- read_rds(here::here("/data/corona_data/timeseries/march_2020_aggregated_timeseries_xts.rds"))
+}
 
-merged_data <- zoo::rbind.zoo(march,april) 
-colnames(merged_data)[colnames(merged_data)=="lgbt_muslim_count"] <- "muslim_tweet_count" # fix typo in the colname
-# merged_data %>% summary()
+data <- read_and_merge("/Users/sefaozalp/Downloads/march_2020_aggregated_brief.csv") %>% 
+  filter(pattern_asian_bool == TRUE)
+
+pattern_slurs <- jsonlite::read_json("data/patterns/pattern_asian_slursonly.json") %>% 
+  paste0(collapse = "|") %>% 
+  stringr::str_to_lower() %>% 
+  paste0("")
+
+
+data_processed <- data %>% 
+      mutate(
+      pattern_asian_slur_bool= ifelse(stringr::str_detect(text, 
+                                                     regex(pattern_slurs, 
+                                                           ignore_case = TRUE)), 
+                                 TRUE,FALSE),
+      pattern_asian_slur_match = stringr::str_match_all(text, 
+                                                        regex(pattern_slurs, 
+                                                              ignore_case = TRUE))
+      )
+
+
+to_xts <- data_processed %>% 
+  # filter_at(vars(contains("bool")), any_vars(.==TRUE)) %>%
+  rtweet::ts_data(by="hours") %>% 
+  rename(asian_tweet_count= n) %>% 
+  left_join( data_processed %>% 
+              filter(pattern_asian_slur_bool ) %>% 
+              rtweet::ts_data(by="hours") %>% 
+              rename(asian_slur_tweet_count= n),
+             by = "time") %>% 
+  mutate_if(is.integer,  ~replace_na(., 0))
+
+
+
+data_xts <- as.xts(to_xts[-1], order.by = (to_xts$time))
+# data_xts$asian_tweet_count= as.integer(data_xts$asian_tweet_count)
+
 ```
+
 
 ```{r}
 dyUnzoom <-function(dygraph) {
@@ -57,7 +99,7 @@ dyCrosshair <- function(dygraph,
 # Covid Tweets and Identities 
 
 ```{r}
-merged_data[,-c(1,2)] %>% 
+data_xts$asian_slur_tweet_count %>% 
   # head(100) %>% 
   dygraph(main = "Tweets Matching The Identity Patterns") %>% 
   dyRangeSelector() %>% 
@@ -67,6 +109,7 @@ merged_data[,-c(1,2)] %>%
               highlightSeriesBackgroundAlpha = 0.2,
               hideOnMouseOut = FALSE) %>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+  dyLegend(show = "always", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %>%    
   dyUnzoom() %>% 
   dyCrosshair() %>% 
   dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))
@@ -75,9 +118,9 @@ merged_data[,-c(1,2)] %>%
 ## Covid Tweets and Identities with 24H roll
  
 ```{r}
-merged_data[,-c(1,2)] %>% 
+data_xts$asian_slur_tweet_count%>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+  dygraph(main = "Tweets Matching The Identity Patterns 24H Roll") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -93,9 +136,9 @@ merged_data[,-c(1,2)] %>%
  
 
 # Covid Tweets With Sums
-```{r}
+```{r, eval=F}
 
-merged_data %>% 
+data_xts %>% 
   # head(100) %>% 
   dygraph(main = "Tweets Matching The Identity Patterns") %>% 
   dyRangeSelector() %>% 
@@ -115,9 +158,9 @@ merged_data %>%
 
 ## Covid Tweets With Sums with 24H roll
 
-```{r}
+```{r, eval=F}
 
-merged_data %>% 
+data_xts %>% 
   # head(100) %>% 
   dygraph(main = "Tweets Matching The Identity Patterns") %>% 
   dyRangeSelector() %>% 

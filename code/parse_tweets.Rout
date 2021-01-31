@@ -1,0 +1,333 @@
+
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #!/usr/bin/env Rscript
+> args = commandArgs(trailingOnly=TRUE)
+> 
+> # input is monthly folder
+> 
+> library(tidyverse)
+── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──
+✔ ggplot2 3.3.0     ✔ purrr   0.3.3
+✔ tibble  2.1.3     ✔ dplyr   0.8.5
+✔ tidyr   1.0.0     ✔ stringr 1.4.0
+✔ readr   1.3.1     ✔ forcats 0.4.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> library(furrr)
+Loading required package: future
+> library(tweetWrangleR)
+> 
+> # month_folder <- args[1]
+> month_folder <- "/Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/"
+> 
+> # patterns_folder <- args[2]
+> patterns_folder <- "/Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/patterns/"
+> 
+> dir.create(file.path(month_folder, "processed_files/rds_files/"), recursive = T, showWarnings = F)
+> dir.create(file.path(month_folder, "processed_files/csv_files/"), recursive=T, showWarnings = F)
+> 
+> month_folder_output_rds <- paste0(month_folder, "processed_files/rds_files/")
+> month_folder_output_csv <- paste0(month_folder, "processed_files/csv_files/")
+> 
+> month_folder_output_rds
+[1] "/Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/"
+> month_folder_output_csv
+[1] "/Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/csv_files/"
+> 
+> file_paths <- list.files(month_folder, pattern = "*collection.json", recursive=T)
+> file_paths
+ [1] "2020-03-30_hour2010_corona_collection.json"
+ [2] "2020-03-30_hour2110_corona_collection.json"
+ [3] "2020-03-30_hour2210_corona_collection.json"
+ [4] "2020-03-30_hour2310_corona_collection.json"
+ [5] "2020-03-31_hour0010_corona_collection.json"
+ [6] "2020-03-31_hour0110_corona_collection.json"
+ [7] "2020-03-31_hour0210_corona_collection.json"
+ [8] "2020-03-31_hour0310_corona_collection.json"
+ [9] "2020-03-31_hour0410_corona_collection.json"
+[10] "2020-03-31_hour0510_corona_collection.json"
+[11] "2020-03-31_hour0610_corona_collection.json"
+[12] "2020-03-31_hour0710_corona_collection.json"
+[13] "2020-03-31_hour0810_corona_collection.json"
+[14] "2020-03-31_hour0910_corona_collection.json"
+[15] "2020-03-31_hour1010_corona_collection.json"
+[16] "2020-03-31_hour1110_corona_collection.json"
+[17] "2020-03-31_hour1210_corona_collection.json"
+[18] "2020-03-31_hour1310_corona_collection.json"
+[19] "2020-03-31_hour1410_corona_collection.json"
+[20] "2020-03-31_hour1510_corona_collection.json"
+[21] "2020-03-31_hour1610_corona_collection.json"
+[22] "2020-03-31_hour1710_corona_collection.json"
+[23] "2020-03-31_hour1810_corona_collection.json"
+[24] "2020-03-31_hour1910_corona_collection.json"
+[25] "2020-03-31_hour2010_corona_collection.json"
+[26] "2020-03-31_hour2110_corona_collection.json"
+[27] "2020-03-31_hour2210_corona_collection.json"
+[28] "2020-03-31_hour2310_corona_collection.json"
+[29] "2020-04-01_hour0010_corona_collection.json"
+[30] "2020-04-01_hour0110_corona_collection.json"
+[31] "2020-04-01_hour0210_corona_collection.json"
+[32] "2020-04-01_hour0310_corona_collection.json"
+[33] "2020-04-01_hour0410_corona_collection.json"
+[34] "2020-04-01_hour0510_corona_collection.json"
+[35] "2020-04-01_hour0610_corona_collection.json"
+[36] "2020-04-01_hour0710_corona_collection.json"
+[37] "2020-04-01_hour0810_corona_collection.json"
+[38] "2020-04-01_hour0910_corona_collection.json"
+[39] "2020-04-01_hour1010_corona_collection.json"
+[40] "2020-04-01_hour1110_corona_collection.json"
+[41] "2020-04-01_hour1210_corona_collection.json"
+[42] "2020-04-01_hour1310_corona_collection.json"
+[43] "2020-04-01_hour1410_corona_collection.json"
+[44] "2020-04-01_hour1510_corona_collection.json"
+[45] "2020-04-01_hour1610_corona_collection.json"
+[46] "2020-04-01_hour1710_corona_collection.json"
+> 
+> plan(multiprocess(workers = 4)) # run on 20 cores
+> options(future.globals.maxSize= 20000*1024^2)
+> 
+> pattern_asian <- jsonlite::read_json( paste0(patterns_folder,"pattern_asian.json")) %>%
++   paste0(collapse = "|") %>% 
++   stringr::str_to_lower()
+> 
+> pattern_asian
+[1] "chinese|china|wuhan|oriental|asian|kungflu|kung-flu|kung flu|ccpvirus|deepstatevirus|depopulation|\\bchapta\\b|\\bchaptas\\b|\\bchigger\\b|\\bchiggers\\b|\\bchink\\b|\\bchinks\\b|\\bching\\b|\\bchings\\b|\\bchonky\\b|\\bchork\\b|ching chong|chonk|chonks|\\bchang\\b|\\bchangs\\b|chank|cheena|\\bchunk\\b|\\bchunks\\b|nooger|slanty|slit eyes|slity eyes|yellow skin|squint|\\bgook\\b|\\bgooks\\b|\\bnip\\b|\\bnips\\b|chinki|\\bginks\\b|\\bgink\\b|panface|pan face|lingling|chinazi|\\bjap\\b|\\bjaps\\b|pancake|rice eater|curry muncher|egg head|egg-head|ironing board|coin slot|socket face|rice ball|rice-ball|\\boreo\\b|pumphkin head|pumpkin-head|burnt rice|pan head|pan-head|bugland|chankoro|insectoid|bugmen|chingchong|chinkistan|chinkland|chiniggers|chinigger"
+> 
+> pattern_jewish <- jsonlite::read_json(paste0(patterns_folder,"pattern_jewish.json"))%>% 
++   paste0(collapse = "|")%>% 
++   stringr::str_to_lower()
+> 
+> pattern_jewish 
+[1] "jew|jews|zionazi|zionists|zionist|zio|zios|soros|globalist|globalists|rothschild|new world order|kike|kikes|khazar|shylock|money-grabber|judas|joo|yid|yahud|yehud|jude|judes|ashkenazi|holocough|holocaugh|jew-fucked|jew-fucker|jewbacca|jewbag|jewbagg|jewtard|jewtarded|ziojew|ziojews|chakh chakh|christ killer|christ killers|doss|feuj|feuje|feujes|feujs|four by two|four by twos|gew|gews|globalist|globalists|hebe|hebes|hebro|hebros|heeb|heebs|holohoax|hooknose|hooknosed|hooknoses|hymie|hymies|itzig|itzige|itzigs|jutku|jutsku|khazars|kike|kikesberg|koszerna|koszerne|koszerni|koszerny|kudłacz|kudłacza|kudłacze|kudłaczów|kudłaczy|marrano|oven dodger|parch|parcha|parchów|parchy|shekelnose|smous|weltjudentum|youd|youds|youpin|youpinerie|youpins|zionazis|żydek|żydka|żydki|żydków|israelis|israeli|\\(\\(\\(|six million|6 million|goy|goyim|synagogue|synagogues|hebrew|hebrews|israel|nwovirus"
+> 
+> pattern_lgbt <- jsonlite::read_json(paste0(patterns_folder,"pattern_lgbt.json"))%>%
++   paste0(collapse = "|")%>% 
++   stringr::str_to_lower()
+> pattern_lgbt
+[1] "anal assassin|anal astronaut|arse bandit|back door bandit|batty boy|bender|bum bandit|butt bandit|bum boy|bum chum|cock jockey|cock knocker|cockknocker|cocknocker|faggot|fag|fudge packer|knob jockey|limp wristed|nancy boy|pansy|pillow biter|poof|poofter|sausage jockey|shirt lifter|shit stabber|turd burglar|woofter|carpet muncher|dyke|homo|lezzie|lesbo|leso|lezzer|lesser |lezza|muff diver|queer|lgbt|\\bgay\\b|\\bgays\\b|\\btrans\\b|transsexual|transgender|transvestite|same sex|same-sex|batiman|batimen|batty bwoy|batty man|batty men|battyman|battymen|butt pirate|chi chi|cocksucker|fagbags|fagdick|fudgepacker|gaylord|gey|ghey|homintern|niggerfag|shemale|she-male|tranny|velvet mafia"
+> 
+> 
+> pattern_muslim <- jsonlite::read_json(paste0(patterns_folder,"pattern_muslim.json"))%>% 
++   paste0(collapse = "|")%>% 
++   stringr::str_to_lower()
+> pattern_muslim
+[1] "muslim|muslims|islam|ramadan|hijab|paki|\\barab\\b|\\boarabs\\b|muzzie|burqa|burka|bengali|haji|hajis|hajji|sand nigger|sand niglet|seminigger|turk|camel fucker|derka derka|durka durka|geitenneuker|gerudos|jihadi|jihadis|jihadist|jihadists|kaffir|kaffirs|kafir|musla|muslamic|muslimal|mussie|mussies|mussy|muzzie|muzzies|muzzpig|muzzpigs|muzzrat|muzzrats|muzzy|pisslam|sand monkey|sand monkeys"
+> 
+> 
+> paste0(month_folder, file_paths[1]) # example file path
+[1] "/Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/2020-03-30_hour2010_corona_collection.json"
+> 
+> parse_filter <- function(json_path, export_as_rds=FALSE, export_as_csv=TRUE){
++   
++   json <- rtweet::parse_stream(paste0(month_folder, json_path)) %>% 
++     select( -c( place_url, place_type, bbox_coords, symbols, display_text_width, urls_url, urls_t.co, media_url, media_t.co, media_expanded_url, ext_media_t.co,  profile_banner_url,	profile_background_url,	profile_image_url,profile_url,	profile_expanded_url, protected, account_lang, ext_media_expanded_url,	ext_media_type, coords_coords, status_url)) %>%
++     filter(lang=="en") %>% 
++     select(text, status_id, everything()) %>% 
++     mutate(
++       pattern_muslim_bool= ifelse(stringr::str_detect(text, regex(pattern_muslim, ignore_case = TRUE)), TRUE, FALSE),
++       pattern_muslim_match = stringr::str_match_all(text, regex(pattern_muslim, ignore_case = TRUE))
++     ) %>% 
++     mutate(
++       pattern_jewish_bool= ifelse(stringr::str_detect(text, regex(pattern_jewish, ignore_case = TRUE)), TRUE, FALSE),
++       pattern_jewish_match = stringr::str_match_all(text, regex(pattern_jewish, ignore_case = TRUE))
++     ) %>% 
++     mutate(
++       pattern_lgbt_bool= ifelse(stringr::str_detect(text, regex(pattern_lgbt, ignore_case = TRUE)), TRUE, FALSE),
++       pattern_lgbt_match = stringr::str_match_all(text, regex(pattern_lgbt, ignore_case = TRUE))
++     ) %>% 
++     mutate(
++       pattern_asian_bool= ifelse(stringr::str_detect(text, regex(pattern_asian, ignore_case = TRUE)), TRUE, FALSE),
++       pattern_asian_match = stringr::str_match_all(text, regex(pattern_asian, ignore_case = TRUE))
++     ) %>% 
++     mutate(hourly_nrow=(nrow(.))) %>%
++     mutate(day_tweet=lubridate::as_date(created_at)) %>%
++     mutate(month_tweet=as.integer(lubridate::month(created_at))) %>% 
++     mutate(year_tweet=as.integer(lubridate::year(created_at))) %>% 
++     mutate(is_reply=ifelse(is.na(reply_to_status_id),FALSE, TRUE)) %>% 
++     mutate_at(vars(ends_with("verified")), ~as.logical(.))
++ 
++   if (export_as_rds == TRUE) {
++     rds_path= paste0(stringr::str_sub(paste0(month_folder_output_rds, json_path), end = -6), ".rds")
++     print(paste("exporting parsed chunk as RDS to: ", rds_path))
++     readr::write_rds(json, path = rds_path)
++   }
++   else {
++     return(json)
++   }
++   
++   if (export_as_csv ==TRUE){
++     csv_path = paste0(stringr::str_sub(paste0(month_folder_output_csv, json_path), end = -6), ".csv")
++     print(paste("exporting parsed chunk as csv to: ", rds_path))
++     json %>%
++       rtweet::save_as_csv(csv_path)
++   }
++   else {
++     return(json)
++   }
++ }
+> 
+> print("without rds")
+[1] "without rds"
+> tictoc::tic()
+> future_map(file_paths[1:10], parse_filter, export_as_csv=TRUE, export_as_rds=TRUE)
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2572 records... Imported 2572 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2010_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2010_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2614 records... Imported 2614 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2110_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2110_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2827 records... Imported 2827 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2210_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2210_corona_collection.rds"
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2600 records... Imported 2600 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2310_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-30_hour2310_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2580 records... Imported 2580 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0010_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0010_corona_collection.rds"
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2622 records... Imported 2622 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0110_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0110_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2825 records... Imported 2825 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0210_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0210_corona_collection.rds"
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2613 records... Imported 2613 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0310_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0310_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2625 records... Imported 2625 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0410_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0410_corona_collection.rds"
+ Found 500 records... Found 1000 records... Found 1500 records... Found 2000 records... Found 2500 records... Found 2643 records... Imported 2643 records. Simplifying...
+[1] "exporting parsed chunk as RDS to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0510_corona_collection.rds"
+[1] "exporting parsed chunk as csv to:  /Users/sefaozalp/Documents/Work/cyberhate/corona/corona_report/data/corona_data/processed_files/rds_files/2020-03-31_hour0510_corona_collection.rds"
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+opening file input connection.
+closing file input connection.
+[[1]]
+NULL
+
+[[2]]
+NULL
+
+[[3]]
+NULL
+
+[[4]]
+NULL
+
+[[5]]
+NULL
+
+[[6]]
+NULL
+
+[[7]]
+NULL
+
+[[8]]
+NULL
+
+[[9]]
+NULL
+
+[[10]]
+NULL
+
+> tictoc::toc()
+41.251 sec elapsed
+> 
+> # sys info
+> Sys.info()
+                                                                                            sysname 
+                                                                                           "Darwin" 
+                                                                                            release 
+                                                                                           "18.7.0" 
+                                                                                            version 
+"Darwin Kernel Version 18.7.0: Sat Oct 12 00:02:19 PDT 2019; root:xnu-4903.278.12~1/RELEASE_X86_64" 
+                                                                                           nodename 
+                                                                                    "SocialDataLab" 
+                                                                                            machine 
+                                                                                           "x86_64" 
+                                                                                              login 
+                                                                                        "sefaozalp" 
+                                                                                               user 
+                                                                                        "sefaozalp" 
+                                                                                     effective_user 
+                                                                                        "sefaozalp" 
+> 
+> # session info
+> sessionInfo()
+R version 3.6.1 (2019-07-05)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] tweetWrangleR_0.0.0.9000 furrr_0.1.0              future_1.14.0           
+ [4] forcats_0.4.0            stringr_1.4.0            dplyr_0.8.5             
+ [7] purrr_0.3.3              readr_1.3.1              tidyr_1.0.0             
+[10] tibble_2.1.3             ggplot2_3.3.0            tidyverse_1.2.1         
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_0.2.5  reshape2_1.4.3    listenv_0.7.0     haven_2.1.1      
+ [5] lattice_0.20-38   colorspace_1.4-1  vctrs_0.2.1       generics_0.0.2   
+ [9] rlang_0.4.4       pillar_1.4.3      glue_1.3.1        withr_2.1.2      
+[13] modelr_0.1.5      readxl_1.3.1      lifecycle_0.1.0   plyr_1.8.4       
+[17] tictoc_1.0        munsell_0.5.0     gtable_0.3.0      cellranger_1.1.0 
+[21] rvest_0.3.4       codetools_0.2-16  parallel_3.6.1    fansi_0.4.0      
+[25] broom_0.5.4       Rcpp_1.0.3        scales_1.0.0      backports_1.1.5  
+[29] jsonlite_1.6      hms_0.5.2         digest_0.6.23     stringi_1.4.3    
+[33] grid_3.6.1        cli_2.0.1         tools_3.6.1       magrittr_1.5     
+[37] dtplyr_0.0.3      crayon_1.3.4      ndjson_0.7.0      pkgconfig_2.0.3  
+[41] zeallot_0.1.0     data.table_1.12.8 xml2_1.2.2        lubridate_1.7.4  
+[45] assertthat_0.2.1  httr_1.4.1        rstudioapi_0.11   R6_2.4.0         
+[49] globals_0.12.4    nlme_3.1-141      compiler_3.6.1   
+> 
+> proc.time()
+   user  system elapsed 
+128.325   3.012  42.773 
