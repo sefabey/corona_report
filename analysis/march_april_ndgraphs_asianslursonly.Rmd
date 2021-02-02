@@ -41,7 +41,6 @@ pattern_slurs <- jsonlite::read_json("data/patterns/pattern_asian_slursonly.json
   stringr::str_to_lower() %>% 
   paste0("")
 
-
 data_processed <- data %>% 
       mutate(
       pattern_asian_slur_bool= ifelse(stringr::str_detect(text, 
@@ -55,6 +54,7 @@ data_processed <- data %>%
 
 
 to_xts <- data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
   # filter_at(vars(contains("bool")), any_vars(.==TRUE)) %>%
   rtweet::ts_data(by="hours") %>% 
   rename(asian_tweet_count= n) %>% 
@@ -65,7 +65,7 @@ to_xts <- data_processed %>%
              by = "time") %>% 
   mutate_if(is.integer,  ~replace_na(., 0))
 
-
+attributes(to_xts$time)$tzone <-"America/New_York"
 
 data_xts <- as.xts(to_xts[-1], order.by = (to_xts$time))
 # data_xts$asian_tweet_count= as.integer(data_xts$asian_tweet_count)
@@ -101,7 +101,7 @@ dyCrosshair <- function(dygraph,
 ```{r}
 data_xts$asian_slur_tweet_count %>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+  dygraph(main = "Tweets Matching The Asian Slurs Pattern") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -112,7 +112,11 @@ data_xts$asian_slur_tweet_count %>%
   dyLegend(show = "always", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %>%    
   dyUnzoom() %>% 
   dyCrosshair() %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))
+  dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1")) %>% 
+  dyEvent("2020-3-16 22:51", "Trump tweets 'Chinese Virus'", labelLoc = "top") %>% #https://oduwsdl.github.io/tweetedat/#1239685852093169664
+  dyEvent("2020-3-18 17:00", "Trump WH statement about 'Chinese Virus'", labelLoc = "top") %>% 
+  dyOptions(useDataTimezone = TRUE) 
+
 ```
 
 ## Covid Tweets and Identities with 24H roll
@@ -120,7 +124,7 @@ data_xts$asian_slur_tweet_count %>%
 ```{r}
 data_xts$asian_slur_tweet_count%>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Patterns 24H Roll") %>% 
+  dygraph(main = "Tweets Matching The Asian Slurs Pattern 24H Roll") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -131,16 +135,30 @@ data_xts$asian_slur_tweet_count%>%
   dyRoller(rollPeriod = 24) %>% 
   dyUnzoom() %>% 
   dyCrosshair() %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))
+  dyOptions(colors = RColorBrewer::brewer.pal(4, "Set1"))%>% 
+ dyEvent("2020-3-16 22:51", "Trump tweets 'Chinese Virus'", labelLoc = "top") %>% #https://oduwsdl.github.io/tweetedat/#1239685852093169664
+  dyEvent("2020-3-18 17:00", "Trump's WH statement about 'Chinese Virus'", labelLoc = "top") %>% 
+  dyOptions(useDataTimezone = TRUE) 
 ```
  
+
+## The frequency of anti-Asian slurs
+```{r}
+data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
+  mutate( pattern_asian_slur_match= as.character(pattern_asian_slur_match)) %>% 
+  count(pattern_asian_slur_match,sort = T) %>% 
+  rmarkdown::paged_table()
+  
+```
+
 
 # Covid Tweets With Sums
 ```{r, eval=F}
 
 data_xts %>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+  dygraph(main = "Tweets Matching The Asian Slurs Pattern") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -150,7 +168,9 @@ data_xts %>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
   dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
   dyUnzoom() %>% 
-  dyCrosshair()
+  dyCrosshair()%>% 
+  dyEvent("2020-3-16", "Trump tweets about 'Chinese Virus'", labelLoc = "bottom") %>% 
+  dyEvent("2020-3-16", "Trump WH statement about 'Chinese Virus'", labelLoc = "top") 
 
 ```
 
@@ -178,7 +198,8 @@ data_xts %>%
 ```
 
 
-
-## Work With Plotly
-
-
+```{r}
+data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
+  View()
+```
