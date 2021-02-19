@@ -33,10 +33,24 @@ read_and_merge <- function(path){
 
 }
 
-data <- read_and_merge("/Users/sefaozalp/Downloads/march_2020_aggregated_brief.csv") %>% 
+data <- read_and_merge("/Users/sefaozalp/Downloads/march_2020_aggregated_brief.csv")
+
+covid_tweet_count <-  data %>%
+  nrow()
+
+data <- data %>% 
   filter(pattern_asian_bool == TRUE)
 
-pattern_slurs <- jsonlite::read_json("data/patterns/pattern_asian_slursonly.json") %>% 
+asian_tweet_count <-  data %>%
+  nrow()
+         
+# pattern_slurs <- jsonlite::read_json("data/patterns/pattern_asian_slursonly.json") %>% 
+#   paste0(collapse = "|") %>% 
+#   stringr::str_to_lower() %>% 
+#   paste0("")
+
+
+pattern_slurs <- jsonlite::read_json("data/patterns/expletives_and_chinese_terms_list_noB.json") %>% 
   paste0(collapse = "|") %>% 
   stringr::str_to_lower() %>% 
   paste0("")
@@ -53,13 +67,55 @@ data_processed <- data %>%
       )
 
 
+```
+
+
+### Remove counter speech RTed more than 5 times
+
+
+```{r}
+
+rted_morethan5 <- data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
+  count(text,sort = T) %>% 
+  filter(n>5)%>% 
+  mutate(pattern_controversial= ifelse(stringr::str_detect(text, 
+                                                     regex("kungflu|kung-flu|kung flu|ccpvirus|chinavirus|china virus|chinazi|ccpchina", ignore_case = TRUE)), 
+                                 TRUE,FALSE)) 
+
+rted_morethan5 %>% 
+  writexl::write_xlsx("data/drop_counterspeech_pattern_controversial.xlsx")
+
+
+rted_morethan5_not_hate_speech <- readxl::read_excel("data/drop_counterspeech_pattern_controversial_arron.xlsx") %>% 
+  janitor::clean_names() %>% 
+  filter(hate_speech_or_counter_speech_neutral!="hate_speech") %>% 
+  select(text)
+
+rted_morethan5_not_hate_speech
+
+
+data_processed <- data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
+  anti_join(rted_morethan5_not_hate_speech, by = "text")
+```
+
+
+```{r}
+
+```
+
+
+```{r}
 to_xts <- data_processed %>% 
   filter(pattern_asian_slur_bool==TRUE) %>% 
+  # distinct(text, .keep_all = T) %>%
   # filter_at(vars(contains("bool")), any_vars(.==TRUE)) %>%
   rtweet::ts_data(by="hours") %>% 
   rename(asian_tweet_count= n) %>% 
   left_join( data_processed %>% 
               filter(pattern_asian_slur_bool ) %>% 
+              # distinct(text, .keep_all = T) %>%
               rtweet::ts_data(by="hours") %>% 
               rename(asian_slur_tweet_count= n),
              by = "time") %>% 
@@ -70,6 +126,21 @@ attributes(to_xts$time)$tzone <-"America/New_York"
 data_xts <- as.xts(to_xts[-1], order.by = (to_xts$time))
 # data_xts$asian_tweet_count= as.integer(data_xts$asian_tweet_count)
 
+```
+
+## The frequency of anti-Asian slurs
+```{r}
+
+# TODO: look for tweets retweeted more than 5 times,
+# eyeball them
+# remove counter speech RTs. 
+  
+data_processed %>% 
+  filter(pattern_asian_slur_bool==TRUE) %>% 
+  # distinct(text, .keep_all = T) %>%
+  mutate( pattern_asian_slur_match= as.character(pattern_asian_slur_match)) %>% 
+  count(pattern_asian_slur_match,sort = T) 
+  
 ```
 
 
@@ -101,7 +172,7 @@ dyCrosshair <- function(dygraph,
 ```{r}
 data_xts$asian_slur_tweet_count %>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Asian Slurs Pattern") %>% 
+  dygraph(main = "Anti-Chinese and Asian Twitter Posts (Tweets and Retweets)") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -124,7 +195,7 @@ data_xts$asian_slur_tweet_count %>%
 ```{r}
 data_xts$asian_slur_tweet_count%>% 
   # head(100) %>% 
-  dygraph(main = "Tweets Matching The Asian Slurs Pattern 24H Roll") %>% 
+  dygraph(main = "Anti-Chinese and Asian Twitter Posts (Tweets and Retweets) 24H Roll") %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -139,38 +210,28 @@ data_xts$asian_slur_tweet_count%>%
  dyEvent("2020-3-16 22:51", "Trump tweets 'Chinese Virus'", labelLoc = "top") %>% #https://oduwsdl.github.io/tweetedat/#1239685852093169664
   dyEvent("2020-3-18 17:00", "Trump's WH statement about 'Chinese Virus'", labelLoc = "top") %>% 
   dyOptions(useDataTimezone = TRUE) 
-```
- 
 
-## The frequency of anti-Asian slurs
-```{r}
-data_processed %>% 
-  filter(pattern_asian_slur_bool==TRUE) %>% 
-  mutate( pattern_asian_slur_match= as.character(pattern_asian_slur_match)) %>% 
-  count(pattern_asian_slur_match,sort = T) %>% 
-  rmarkdown::paged_table()
-  
 ```
 
 
 # Covid Tweets With Sums
 ```{r, eval=F}
-
-data_xts %>% 
-  # head(100) %>% 
-  dygraph(main = "Tweets Matching The Asian Slurs Pattern") %>% 
-  dyRangeSelector() %>% 
-  dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
-  dyRangeSelector(height = 50) %>% 
-  dyHighlight(highlightCircleSize = 5, 
-              highlightSeriesBackgroundAlpha = 0.2,
-              hideOnMouseOut = FALSE) %>% 
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
-  dyUnzoom() %>% 
-  dyCrosshair()%>% 
-  dyEvent("2020-3-16", "Trump tweets about 'Chinese Virus'", labelLoc = "bottom") %>% 
-  dyEvent("2020-3-16", "Trump WH statement about 'Chinese Virus'", labelLoc = "top") 
+# 
+# data_xts %>% 
+#   # head(100) %>% 
+#   dygraph(main = "Tweets Matching The Asian Slurs Pattern") %>% 
+#   dyRangeSelector() %>% 
+#   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
+#   dyRangeSelector(height = 50) %>% 
+#   dyHighlight(highlightCircleSize = 5, 
+#               highlightSeriesBackgroundAlpha = 0.2,
+#               hideOnMouseOut = FALSE) %>% 
+#   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+#   dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
+#   dyUnzoom() %>% 
+#   dyCrosshair()%>% 
+#   dyEvent("2020-3-16", "Trump tweets about 'Chinese Virus'", labelLoc = "bottom") %>% 
+#   dyEvent("2020-3-16", "Trump WH statement about 'Chinese Virus'", labelLoc = "top") 
 
 ```
 
@@ -179,27 +240,49 @@ data_xts %>%
 ## Covid Tweets With Sums with 24H roll
 
 ```{r, eval=F}
-
-data_xts %>% 
-  # head(100) %>% 
-  dygraph(main = "Tweets Matching The Identity Patterns") %>% 
-  dyRangeSelector() %>% 
-  dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
-  dyRangeSelector(height = 50) %>% 
-  dyHighlight(highlightCircleSize = 5, 
-              highlightSeriesBackgroundAlpha = 0.2,
-              hideOnMouseOut = FALSE) %>% 
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
-  dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
-  dyRoller(rollPeriod = 24) %>% 
-  dyUnzoom() %>% 
-  dyCrosshair()
+# data_xts %>% 
+#   # head(100) %>% 
+#   dygraph(main = "Tweets Matching The Identity Patterns") %>% 
+#   dyRangeSelector() %>% 
+#   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
+#   dyRangeSelector(height = 50) %>% 
+#   dyHighlight(highlightCircleSize = 5, 
+#               highlightSeriesBackgroundAlpha = 0.2,
+#               hideOnMouseOut = FALSE) %>% 
+#   dyHighlight(highlightSeriesOpts = list(strokeWidth = 2)) %>% 
+#   dyOptions(colors = RColorBrewer::brewer.pal(6, "Dark2")) %>% 
+#   dyRoller(rollPeriod = 24) %>% 
+#   dyUnzoom() %>% 
+#   dyCrosshair()
 
 ```
 
 
 ```{r}
-data_processed %>% 
-  filter(pattern_asian_slur_bool==TRUE) %>% 
-  View()
+data_processed
 ```
+
+# Data Volume Summary
+
+Across the data collected in Coronovirus subset, we collected `r covid_tweet_count` tweets. Amongst these, `r asian_tweet_count` of them matched Asian identity pattern. When we pattern matched the Asian identity tweets with expletives_and_chinese_terms_list and removed counter speech tweets which were RTed more than 5 times, we ended up with `r to_xts %>% nrow()` tweets.
+
+
+```{r}
+before_tweet <- data_xts["2020-03-15 23:00:00/2020-03-16 22:00:00"]
+
+after_tweet <-data_xts["2020-03-16 23:00:00/2020-03-17 22:00:00"]
+
+sum(after_tweet$asian_slur_tweet_count)/sum(before_tweet$asian_slur_tweet_count)*100
+sum(after_tweet$asian_slur_tweet_count)
+```
+In the 24 before Trump's 'Chinese Virus' tweet, we identified `r sum(before_tweet$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_tweet$asian_slur_tweet_count)`. This equates to `r sum(after_tweet$asian_slur_tweet_count)/sum(before_tweet$asian_slur_tweet_count)*100`% change.
+
+```{r}
+
+before_wh <- data_xts["2020-03-17 13:00:00/2020-03-18 12:00:00"]
+after_wh <-data_xts["2020-03-18 13:00:00/2020-03-19 12:00:00"]
+
+sum(after_wh$asian_slur_tweet_count)/sum(before_wh$asian_slur_tweet_count)*100
+```
+
+In the 24 before Trump's 'Chinese Virus' White House conference, we identified `r sum(before_wh$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_wh$asian_slur_tweet_count)`. This equates to `r sum(after_wh$asian_slur_tweet_count)/sum(before_wh$asian_slur_tweet_count)*100`% change.
