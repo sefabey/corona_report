@@ -172,7 +172,7 @@ dyCrosshair <- function(dygraph,
 ```{r}
 data_xts$asian_slur_tweet_count %>% 
   # head(100) %>% 
-  dygraph(main = "Anti-Chinese and Asian Twitter Posts (Tweets and Retweets)") %>% 
+  dygraph() %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -195,7 +195,7 @@ data_xts$asian_slur_tweet_count %>%
 ```{r}
 data_xts$asian_slur_tweet_count%>% 
   # head(100) %>% 
-  dygraph(main = "Anti-Chinese and Asian Twitter Posts (Tweets and Retweets) 24H Roll") %>% 
+  dygraph() %>% 
   dyRangeSelector() %>% 
   dyOptions(drawPoints = TRUE, pointSize = 1) %>% 
   dyRangeSelector(height = 50) %>% 
@@ -259,12 +259,13 @@ data_xts$asian_slur_tweet_count%>%
 
 
 ```{r}
-data_processed
+data_processed %>% 
+  writexl::write_xlsx("data/plotted_data.xlsx")
 ```
 
 # Data Volume Summary
 
-Across the data collected in Coronovirus subset, we collected `r covid_tweet_count` tweets. Amongst these, `r asian_tweet_count` of them matched Asian identity pattern. When we pattern matched the Asian identity tweets with expletives_and_chinese_terms_list and removed counter speech tweets which were RTed more than 5 times, we ended up with `r to_xts %>% nrow()` tweets.
+Across the data collected in Coronovirus subset, we collected `r covid_tweet_count` tweets. Amongst these, `r asian_tweet_count` of them matched Asian identity pattern. When we pattern matched the Asian identity tweets with expletives_and_chinese_terms_list and removed counter speech tweets which were RTed more than 5 times, we ended up with `r data_processed %>% nrow()` tweets.
 
 
 ```{r}
@@ -274,8 +275,10 @@ after_tweet <-data_xts["2020-03-16 23:00:00/2020-03-17 22:00:00"]
 
 sum(after_tweet$asian_slur_tweet_count)/sum(before_tweet$asian_slur_tweet_count)*100
 sum(after_tweet$asian_slur_tweet_count)
+
+(sum(after_tweet$asian_slur_tweet_count)-sum(before_tweet$asian_slur_tweet_count))/sum(before_tweet$asian_slur_tweet_count)*100 # percentage increase
 ```
-In the 24 before Trump's 'Chinese Virus' tweet, we identified `r sum(before_tweet$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_tweet$asian_slur_tweet_count)`. This equates to `r sum(after_tweet$asian_slur_tweet_count)/sum(before_tweet$asian_slur_tweet_count)*100`% change.
+In the 24 before Trump's 'Chinese Virus' tweet, we identified `r sum(before_tweet$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_tweet$asian_slur_tweet_count)`. This equates to `r (sum(after_tweet$asian_slur_tweet_count)-sum(before_tweet$asian_slur_tweet_count))/sum(before_tweet$asian_slur_tweet_count)*100`% increase.
 
 ```{r}
 
@@ -283,6 +286,8 @@ before_wh <- data_xts["2020-03-17 13:00:00/2020-03-18 12:00:00"]
 after_wh <-data_xts["2020-03-18 13:00:00/2020-03-19 12:00:00"]
 
 sum(after_wh$asian_slur_tweet_count)/sum(before_wh$asian_slur_tweet_count)*100
+
+(sum(after_wh$asian_slur_tweet_count)-sum(before_wh$asian_slur_tweet_count))/sum(before_wh$asian_slur_tweet_count)*100 # percentage increase
 ```
 
-In the 24 before Trump's 'Chinese Virus' White House conference, we identified `r sum(before_wh$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_wh$asian_slur_tweet_count)`. This equates to `r sum(after_wh$asian_slur_tweet_count)/sum(before_wh$asian_slur_tweet_count)*100`% change.
+In the 24 before Trump's 'Chinese Virus' White House conference, we identified `r sum(before_wh$asian_slur_tweet_count)` tweets offensive towards Chinese/Asian identity. In the 24 hours after Trump's 'Chinese Virus' tweet we identified `r sum(after_wh$asian_slur_tweet_count)`. This equates to `r (sum(after_wh$asian_slur_tweet_count)-sum(before_wh$asian_slur_tweet_count))/sum(before_wh$asian_slur_tweet_count)*100 `% increase.
