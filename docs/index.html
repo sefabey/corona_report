@@ -306,7 +306,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -315,7 +315,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -324,10 +324,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-02-20
+<strong>Last updated:</strong> 2021-02-27
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>corona_report/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -343,22 +343,22 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttreef0c6800497927f7c66629133053a14f2f44250ebtargetblankf0c6800a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/sefabey/corona_report/tree/f0c6800497927f7c66629133053a14f2f44250eb" target="_blank">f0c6800</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttree53e56cfa85d4eac0fe6b04fe085d12d3ec724f51targetblank53e56cfa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/sefabey/corona_report/tree/53e56cfa85d4eac0fe6b04fe085d12d3ec724f51" target="_blank">53e56cf</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttreef0c6800497927f7c66629133053a14f2f44250ebtargetblankf0c6800a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomsefabeycoronareporttree53e56cfa85d4eac0fe6b04fe085d12d3ec724f51targetblank53e56cfa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -375,12 +375,16 @@ Ignored files:
 Untracked files:
     Untracked:  broken_tweets/
     Untracked:  data/corona_data/csvs/
-    Untracked:  data/plotted_data.xlsx
+    Untracked:  data/hourly_tweet_counts.csv
     Untracked:  shiny/
 
 Unstaged changes:
+    Modified:   analysis/index.Rmd
+
+Staged changes:
+    New:        analysis/march_april_geodistribution.Rmd
     Modified:   analysis/march_april_ndgraphs_asianslursonly.Rmd
-    Modified:   data/drop_counterspeech_pattern_controversial.xlsx
+    New:        data/plotted_data_metadata.csv
 
 </code></pre>
 <p>
@@ -419,6 +423,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sefabey/corona_report/53e56cfa85d4eac0fe6b04fe085d12d3ec724f51/docs/index.html" target="_blank">53e56cf</a>
+</td>
+<td>
+Sefa Ozalp
+</td>
+<td>
+2021-02-20
+</td>
+<td>
+fix titles and count of plotted tweets
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -647,7 +668,9 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Click <a href="march_april_ndgraphs.html">here</a> for ndgraphs. Click <a href="march_april_ndgraphs_asianslursonly.html">here</a> for Asian Slurs only ndgraphs.</p>
+<p>Click <a href="march_april_ndgraphs.html">here</a> for ndgraphs.</p>
+<p>Click <a href="march_april_ndgraphs_asianslursonly.html">here</a> for Asian Slurs only ndgraphs.</p>
+<p>Click <a href="march_april_geodistribution.html">here</a> for Asian Slurs only ndgraphs.</p>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

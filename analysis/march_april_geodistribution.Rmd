@@ -1,0 +1,102 @@
+---
+title: "march_april_geodistribution"
+author: "Sefa Ozalp"
+date: "2021-02-27"
+output: workflowr::wflow_html
+---
+
+## Introduction
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+plotted <- read_csv("data/plotted_data_metadata.csv") %>% 
+  select(location, description, place_name, 
+         place_full_name, country, country_code,
+         geo_coords,
+         name,
+         text,
+         status_id)
+```
+
+
+```{r}
+plotted %>% 
+  select(name,text) %>% 
+  rmarkdown::paged_table()
+```
+
+
+```{r}
+plotted %>% 
+  skimr::skim()
+```
+
+```{r}
+plotted %>% 
+  count(geo_coords, sort = TRUE)%>% 
+  rmarkdown::paged_table()
+```
+
+
+```{r}
+plotted %>% 
+  count(country, sort = TRUE)%>% 
+  rmarkdown::paged_table()
+```
+
+
+```{r}
+plotted %>% 
+  filter(country=="United Kingdom")%>% 
+  rmarkdown::paged_table()
+```
+
+
+
+```{r}
+pattern_UK <- "\\bLondon\\b|\\bUK\\b|\\bU.K\\b|\\bU.K.\\b|\\bUnited Kingdom\\b|\\England\\b|\\bBritain\\b|\\bWales\\b|\\bNorthern Ireland\\b|\\bScotland\\b|\\bManchester\\b|\\bLiverpool\\b|\\bGB\\b|\\bCardiff\\b|\\bCoventry\\b|\\bEdinburgh\\b|United Kingdom"
+```
+
+
+```{r}
+plotted <- plotted %>% 
+  mutate(uk_tweets = case_when(
+    country== "United Kingdom" ~ TRUE,
+    str_detect(string = location, pattern = regex(pattern_UK,ignore_case = TRUE)) ~ TRUE,
+    str_detect(string = description, pattern = regex(pattern_UK,ignore_case = TRUE)) ~ TRUE,
+    TRUE ~FALSE
+    )
+  )
+
+```
+
+
+### Count UK Tweets
+
+
+```{r}
+
+plotted %>% 
+  count(uk_tweets)%>% 
+  rmarkdown::paged_table()
+```
+
+
+### Explore locations are not IDed as UK (to see if we missed sth obvious)
+```{r}
+plotted %>% 
+  filter(!uk_tweets) %>% 
+  count(location, sort = TRUE)%>% 
+  rmarkdown::paged_table()
+```
+
+
+```{r}
+plotted %>% 
+  filter(!uk_tweets) %>% 
+  count(description, sort = TRUE)%>% 
+  rmarkdown::paged_table()
+```

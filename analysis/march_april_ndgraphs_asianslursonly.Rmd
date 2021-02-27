@@ -102,7 +102,13 @@ data_processed <- data_processed %>%
 
 
 ```{r}
+library(tidyverse)
+large_data <- read_csv("/scratch/scwc0004/corona/data/processed_files/ndjson_processing/march_2020/report_aggregates/march_2020_aggregated_full.csv")
 
+plotted_data <- readxl::read_xlsx("/scratch/scwc0004/corona/data/processed_files/ndjson_processing/march_2020/report_aggregates/plotted_data.xlsx")
+large_data %>% 
+  semi_join(plotted_data,  by = "text") %>% 
+  write_csv("/scratch/scwc0004/corona/data/processed_files/ndjson_processing/march_2020/report_aggregates/plotted_data_metadata.csv")
 ```
 
 
@@ -212,7 +218,6 @@ data_xts$asian_slur_tweet_count%>%
   dyOptions(useDataTimezone = TRUE) 
 
 ```
-
 
 # Covid Tweets With Sums
 ```{r, eval=F}
